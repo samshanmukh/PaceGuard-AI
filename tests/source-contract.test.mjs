@@ -3,12 +3,14 @@ import { readFile } from "node:fs/promises";
 import test from "node:test";
 
 test("uses the standard Vercel-compatible Next.js toolchain", async () => {
-  const [packageJson, nextConfig, apiRoute] = await Promise.all([
+  const [packageJson, nextConfig, apiRoute, vercelConfig] = await Promise.all([
     readFile(new URL("../package.json", import.meta.url), "utf8"),
     readFile(new URL("../next.config.ts", import.meta.url), "utf8"),
     readFile(new URL("../app/api/decision/route.ts", import.meta.url), "utf8"),
+    readFile(new URL("../vercel.json", import.meta.url), "utf8"),
   ]);
   const pkg = JSON.parse(packageJson);
+  const vercel = JSON.parse(vercelConfig);
 
   assert.equal(pkg.scripts.dev, "next dev");
   assert.equal(pkg.scripts.build, "next build");
@@ -17,6 +19,7 @@ test("uses the standard Vercel-compatible Next.js toolchain", async () => {
   assert.ok(pkg.dependencies.next);
   assert.equal(pkg.devDependencies.vinext, undefined);
   assert.equal(pkg.devDependencies.wrangler, undefined);
+  assert.equal(vercel.framework, "nextjs");
   assert.match(nextConfig, /reactStrictMode:\s*true/);
   assert.match(apiRoute, /runtime\s*=\s*"nodejs"/);
 });

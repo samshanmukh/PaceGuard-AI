@@ -20,7 +20,7 @@ Open the local URL printed by the development server. No API keys, database, sig
 ## Deploy to Vercel
 
 1. Import `samshanmukh/PaceGuard-AI` in Vercel.
-2. Keep the detected **Next.js** framework preset and repository root.
+2. The committed `vercel.json` pins the **Next.js** framework preset; keep the repository root as `.`.
 3. Leave the build command as `next build` and the output directory unset.
 4. Deploy. The demo requires no environment variables.
 
