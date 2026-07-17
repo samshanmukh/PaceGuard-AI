@@ -424,3 +424,96 @@ button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
 }
+
+/* 2026 visual refinement — performance lab, not generic admin dashboard */
+:root {
+  --ink: #070a0f;
+  --ink-2: #0a0f16;
+  --panel: #101720;
+  --panel-2: #141d28;
+  --line: #263244;
+  --text: #f5f7f9;
+  --muted: #98a3b3;
+  --lime: #caff55;
+  --radius: 18px;
+}
+
+body { font-feature-settings: "ss01" 1, "cv11" 1; }
+.app-shell { background: radial-gradient(circle at 75% -20%, rgba(73, 125, 173, .08), transparent 34%), var(--ink-2); }
+.app-shell::before { content: ""; position: fixed; z-index: 0; inset: 64px 0 0 var(--sidebar); pointer-events: none; background: linear-gradient(90deg, rgba(255,255,255,.018) 1px, transparent 1px), linear-gradient(rgba(255,255,255,.012) 1px, transparent 1px); background-size: 72px 72px; mask-image: linear-gradient(to bottom, rgba(0,0,0,.65), transparent 72%); }
+.app-main, .screen-shell { position: relative; z-index: 1; }
+
+.landing-screen { background: radial-gradient(circle at 78% 28%, rgba(75, 135, 198, .16), transparent 30%), radial-gradient(circle at 35% 82%, rgba(202,255,85,.075), transparent 30%), linear-gradient(145deg, #070a0f, #0a111a 52%, #080c12); }
+.landing-grid { opacity: .2; background-size: 72px 72px; mask-image: linear-gradient(to bottom, black, transparent 84%); }
+.landing-nav { height: 82px; }
+.landing-hero { padding-top: clamp(74px, 12vh, 128px); width: min(610px, 48vw); }
+.landing-hero h1 { font-size: clamp(52px, 5.2vw, 78px); line-height: .98; letter-spacing: -.062em; margin: 20px 0 25px; }
+.landing-hero h1 em { -webkit-text-stroke: 1px rgba(202,255,85,.76); }
+.landing-hero > p { max-width: 600px; color: #aab4c2; font-size: clamp(15px, 1.15vw, 18px); line-height: 1.65; }
+.landing-actions { margin-top: 32px; }
+.telemetry-stage { width: min(46vw, 720px); right: 4vw; top: 26vh; height: min(43vh, 410px); border-radius: 22px; border-color: rgba(139,161,188,.2); background: linear-gradient(155deg, rgba(18,28,40,.94), rgba(8,13,20,.84)); box-shadow: 0 36px 100px rgba(0,0,0,.38), inset 0 1px rgba(255,255,255,.04); }
+.telemetry-stage::before { content: "PACE / LOAD / RECOVERY"; position: absolute; z-index: 2; right: 20px; bottom: 10px; color: rgba(134,151,174,.26); font: 7px var(--font-geist-mono), monospace; letter-spacing: .16em; }
+.telemetry-bars > i { border-radius: 2px 2px 0 0; }
+.brand-mark { border-radius: 11px 5px 11px 5px; box-shadow: 0 0 0 1px rgba(202,255,85,.3), 0 0 28px rgba(202,255,85,.13); }
+
+.sidebar { background: linear-gradient(180deg, rgba(10,15,22,.98), rgba(7,11,16,.98)); border-right-color: rgba(108,129,156,.17); }
+.team-switcher { border-color: rgba(96,119,148,.26); background: linear-gradient(145deg, #111925, #0f161f); }
+.main-nav button { height: 41px; font-size: 12px; border-radius: 10px; }
+.main-nav button.active { background: linear-gradient(90deg, rgba(202,255,85,.14), rgba(202,255,85,.035)); box-shadow: inset 2px 0 0 var(--lime), 0 8px 24px rgba(0,0,0,.08); }
+.athlete-rail button b { font-size: 11px; }
+.athlete-rail button small { font-size: 9px; }
+.app-header { background: rgba(10,15,22,.82); border-bottom-color: rgba(100,122,150,.18); box-shadow: 0 8px 36px rgba(0,0,0,.09); }
+.breadcrumbs, .architecture-trigger { font-size: 10px; }
+.screen-shell { padding-top: 38px; }
+.page-intro { margin-bottom: 28px; }
+.page-intro h2 { font-size: 32px; font-weight: 650; }
+.page-intro p { font-size: 13px; color: #8c98aa; }
+
+.summary-grid { gap: 12px; }
+.summary-grid article { min-height: 116px; padding: 18px; border-color: rgba(92,115,145,.24); border-radius: 15px; background: linear-gradient(145deg, rgba(19,28,39,.96), rgba(14,21,30,.96)); box-shadow: inset 0 1px rgba(255,255,255,.025), 0 14px 36px rgba(0,0,0,.08); transition: transform .2s ease, border-color .2s ease; }
+.summary-grid article:hover { transform: translateY(-2px); border-color: rgba(121,148,182,.36); }
+.summary-grid article > span { font-size: 10px; }
+.summary-grid article strong { font-size: 32px; font-variant-numeric: tabular-nums; }
+.summary-grid article p { font-size: 10px; }
+.summary-grid article > i { font-size: 9px; padding: 5px 7px; }
+.section-heading { margin-top: 34px; }
+.section-heading h3, .panel-heading h3 { font-size: 18px; }
+
+.decision-hero { grid-template-columns: 310px 1fr 250px; min-height: 252px; border-radius: 19px; border-color: rgba(255,109,100,.34); background: radial-gradient(circle at 8% 18%, rgba(255,109,100,.1), transparent 27%), linear-gradient(145deg, #151c26, #0e151e); box-shadow: 0 24px 70px rgba(0,0,0,.24), inset 0 1px rgba(255,255,255,.035); }
+.decision-profile, .decision-evidence, .decision-action { padding: 25px; }
+.athlete-identity h3 { font-size: 20px; }
+.athlete-identity p, .decision-action span, .hero-signals small { font-size: 10px; }
+.hero-signals > div { min-height: 62px; border-color: rgba(89,111,140,.3); background: rgba(21,30,41,.78); border-radius: 10px; }
+.hero-signals b { font-size: 13px; }
+.decision-caution { font-size: 9px; }
+.decision-action b { font-size: 15px; }
+
+.panel { position: relative; border-color: rgba(91,113,142,.24); border-radius: 16px; background: linear-gradient(145deg, rgba(18,26,37,.97), rgba(13,20,29,.97)); box-shadow: inset 0 1px rgba(255,255,255,.025), 0 16px 42px rgba(0,0,0,.08); }
+.panel::before { content: ""; position: absolute; z-index: 2; left: 18px; right: 18px; top: 0; height: 1px; background: linear-gradient(90deg, transparent, rgba(202,255,85,.18), transparent); pointer-events: none; }
+.primary-button { border-radius: 10px; box-shadow: 0 0 0 1px rgba(202,255,85,.25), 0 10px 28px rgba(156,217,55,.1); }
+.secondary-button, .date-button, .filter-button { border-radius: 10px; }
+.eyebrow { font-size: 11px; }
+.readiness-ring { width: 82px; height: 82px; }
+.ring-inner span { font-size: 24px; font-variant-numeric: tabular-nums; }
+.heat-cell { border-radius: 9px; transition: transform .2s ease, border-color .2s ease, background .2s ease; }
+
+@media (max-width: 1250px) and (min-width: 981px) {
+  .decision-hero { grid-template-columns: 280px 1fr 225px; }
+  .decision-profile, .decision-evidence, .decision-action { padding: 20px; }
+}
+
+@media (max-width: 980px) {
+  .landing-hero { width: min(590px, 53vw); }
+  .telemetry-stage { width: 46vw; right: 2vw; }
+  .decision-hero { grid-template-columns: 1fr 1.6fr; }
+}
+
+@media (max-width: 740px) {
+  .app-shell::before { inset: 55px 0 0 0; }
+  .landing-hero { width: 100%; padding-top: 62px; }
+  .landing-hero h1 { font-size: clamp(42px, 12vw, 56px); }
+  .telemetry-stage { width: calc(100% + 20px); right: auto; top: auto; height: 300px; border-radius: 20px 0 0 20px; }
+  .screen-shell { padding-top: 25px; }
+  .page-intro h2 { font-size: 26px; }
+  .decision-hero { grid-template-columns: 1fr; }
+}
