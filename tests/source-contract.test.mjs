@@ -52,6 +52,8 @@ test("keeps product, safety, and provider seams in source", async () => {
   assert.match(workflow, /Safety Review/);
   assert.match(integrations, /apple-health/);
   assert.match(integrations, /health-connect/);
+  assert.match(integrations, /Runna/);
+  assert.match(integrations, /Runna → Strava \/ Apple Health → PaceGuard/);
   assert.match(integrations, /consentScope/);
   assert.match(integrationRoute, /fictional-demo/);
   assert.doesNotMatch(page, /SkeletonPreview|codex-preview/);

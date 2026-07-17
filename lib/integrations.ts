@@ -1,4 +1,4 @@
-export type IntegrationProviderId = "strava" | "fitbit" | "apple-health" | "health-connect";
+export type IntegrationProviderId = "strava" | "fitbit" | "apple-health" | "health-connect" | "runna";
 export type IntegrationStatus = "connected" | "available" | "bridge-required" | "attention";
 
 export interface IntegrationProvider {
@@ -10,6 +10,7 @@ export interface IntegrationProvider {
   dataTypes: string[];
   lastSync?: string;
   sourceLabel: string;
+  provenance?: string;
 }
 
 export interface NormalizedAthleteEvent {
@@ -25,6 +26,16 @@ export interface NormalizedAthleteEvent {
 }
 
 export const integrationProviders: IntegrationProvider[] = [
+  {
+    id: "runna",
+    name: "Runna",
+    category: "Training plan bridge",
+    status: "bridge-required",
+    description: "Imports completed Runna workouts through the athlete’s authorized Strava or Apple Health connection.",
+    dataTypes: ["Completed runs", "Pace", "Distance", "Heart rate"],
+    sourceLabel: "Official ecosystem bridge",
+    provenance: "Runna → Strava / Apple Health → PaceGuard",
+  },
   {
     id: "strava",
     name: "Strava",
@@ -65,6 +76,7 @@ export const integrationProviders: IntegrationProvider[] = [
 ];
 
 export const normalizedDemoEvents: NormalizedAthleteEvent[] = [
+  { id: "evt-runna-1", athleteId: "maya-chen", source: "runna", sourceRecordId: "runna-via-strava-98420", type: "workout", recordedAt: "Today · 07:12", value: "Runna progression · 8.4 km · completed", confidence: 98, consentScope: "activity:read" },
   { id: "evt-1", athleteId: "maya-chen", source: "strava", sourceRecordId: "strava-98420", type: "workout", recordedAt: "Today · 07:12", value: "8.4 km · 43:08 · RPE 7", confidence: 99, consentScope: "activity:read" },
   { id: "evt-2", athleteId: "maya-chen", source: "fitbit", sourceRecordId: "fitbit-sleep-771", type: "sleep", recordedAt: "Today · 06:38", value: "5h 12m · 71% efficiency", confidence: 97, consentScope: "sleep" },
   { id: "evt-3", athleteId: "maya-chen", source: "fitbit", sourceRecordId: "fitbit-hrv-771", type: "recovery", recordedAt: "Today · 06:40", value: "HRV 44 ms · −18 pts", confidence: 94, consentScope: "heartrate" },
@@ -72,6 +84,10 @@ export const normalizedDemoEvents: NormalizedAthleteEvent[] = [
 ];
 
 export function getProviderAuthorizationUrl(provider: IntegrationProviderId, origin: string) {
+  if (provider === "runna" && process.env.STRAVA_CLIENT_ID) {
+    const redirect = `${origin}/api/integrations/callback?provider=strava&upstream=runna`;
+    return `https://www.strava.com/oauth/authorize?client_id=${encodeURIComponent(process.env.STRAVA_CLIENT_ID)}&redirect_uri=${encodeURIComponent(redirect)}&response_type=code&scope=activity:read_all`;
+  }
   if (provider === "strava" && process.env.STRAVA_CLIENT_ID) {
     const redirect = `${origin}/api/integrations/callback?provider=strava`;
     return `https://www.strava.com/oauth/authorize?client_id=${encodeURIComponent(process.env.STRAVA_CLIENT_ID)}&redirect_uri=${encodeURIComponent(redirect)}&response_type=code&scope=activity:read_all`;

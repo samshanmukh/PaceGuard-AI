@@ -602,7 +602,7 @@ function AthleteView({ approved }: { approved: boolean }) {
 function IntegrationHub() {
   const [selectedProvider, setSelectedProvider] = useState<IntegrationProviderId | null>(null);
   const [agentStep, setAgentStep] = useState(0);
-  const [connections, setConnections] = useState<Record<IntegrationProviderId, boolean>>({ "strava": true, "fitbit": false, "apple-health": false, "health-connect": false });
+  const [connections, setConnections] = useState<Record<IntegrationProviderId, boolean>>({ "runna": false, "strava": true, "fitbit": false, "apple-health": false, "health-connect": false });
   const [syncing, setSyncing] = useState(false);
   const [lastSync, setLastSync] = useState("Today · 08:41");
   const [zeroApproved, setZeroApproved] = useState(false);
@@ -633,7 +633,7 @@ function IntegrationHub() {
       <section className="page-intro integration-intro"><div><span className="eyebrow">Consent-first data layer</span><h2>Data Connection Agent</h2><p>Connect athlete sources, normalize every signal, and keep permission and provenance visible.</p></div><button className="primary-button" data-testid="sync-all-sources" onClick={syncNow} disabled={syncing}><RefreshCcw size={15} className={syncing ? "spin" : ""} /> {syncing ? "Syncing sources…" : "Sync all sources"}</button></section>
 
       <section className="integration-health-strip">
-        <div><span><i className="healthy" /> Connection health</span><strong>1 connected</strong><small>3 ready to configure</small></div>
+        <div><span><i className="healthy" /> Connection health</span><strong>1 connected</strong><small>4 ready to configure</small></div>
         <div><span><Database size={14} /> Last normalization</span><strong>{lastSync}</strong><small>1 duplicate safely merged</small></div>
         <div><span><ShieldCheck size={14} /> Consent posture</span><strong>Least privilege</strong><small>Read-only scopes · coach visible</small></div>
         <div><span><Cable size={14} /> Agent status</span><strong>Monitoring</strong><small>No silent permission changes</small></div>
@@ -645,12 +645,12 @@ function IntegrationHub() {
           <div className="provider-grid">
             {integrationProviders.map((provider) => {
               const connected = connections[provider.id];
-              const Icon = provider.id === "strava" ? Activity : provider.id === "fitbit" ? Watch : Smartphone;
+              const Icon = provider.id === "runna" ? Route : provider.id === "strava" ? Activity : provider.id === "fitbit" ? Watch : Smartphone;
               return <article className={`provider-card ${connected ? "connected" : ""}`} key={provider.id}>
-                <header><span className={`provider-icon ${provider.id}`}><Icon size={20} /></span><span className={`provider-status ${connected ? "connected" : provider.status}`}><i /> {connected ? "Connected" : provider.status === "bridge-required" ? "Native bridge" : "Available"}</span></header>
+                <header><span className={`provider-icon ${provider.id}`}><Icon size={20} /></span><span className={`provider-status ${connected ? "connected" : provider.status}`}><i /> {connected ? "Connected" : provider.id === "runna" ? "Ecosystem bridge" : provider.status === "bridge-required" ? "Native bridge" : "Available"}</span></header>
                 <span className="provider-category">{provider.category}</span><h3>{provider.name}</h3><p>{provider.description}</p>
                 <div className="provider-scopes">{provider.dataTypes.map((type) => <span key={type}>{type}</span>)}</div>
-                <div className="provider-source"><FileCheck size={14} /><span><b>{provider.sourceLabel}</b>{connected && <small>Last sync · {provider.lastSync ?? "just now"}</small>}</span></div>
+                <div className="provider-source"><FileCheck size={14} /><span><b>{provider.sourceLabel}</b>{provider.provenance && <small>{provider.provenance}</small>}{connected && <small>Last sync · {provider.lastSync ?? "just now"}</small>}</span></div>
                 <footer>{connected ? <><button className="provider-secondary" onClick={() => openAgent(provider.id)}>Review access</button><button className="provider-danger" onClick={() => disconnect(provider.id)}>Disconnect</button></> : <button className="provider-connect" data-testid={`connect-${provider.id}`} onClick={() => openAgent(provider.id)}><Link2 size={14} /> Connect with agent</button>}</footer>
               </article>;
             })}
@@ -670,15 +670,15 @@ function IntegrationHub() {
 
       <section className="normalized-panel panel">
         <div className="panel-heading"><div><span className="eyebrow">Normalized athlete event stream</span><h3>One schema, traceable sources</h3><p>Duplicate-safe records ready for PaceGuard’s decision workflow.</p></div><span className="live-chip"><i /> Fictional demo feed</span></div>
-        <div className="event-table"><div className="event-row event-head"><span>Source</span><span>Signal</span><span>Normalized value</span><span>Consent scope</span><span>Confidence</span></div>{normalizedDemoEvents.map((event) => <div className="event-row" key={event.id}><span><i className={`event-source ${event.source}`} />{event.source === "strava" ? "Strava" : "Fitbit"}<small>{event.recordedAt}</small></span><span>{event.type}</span><b>{event.value}</b><code>{event.consentScope}</code><strong>{event.confidence}%</strong></div>)}</div>
+        <div className="event-table"><div className="event-row event-head"><span>Source</span><span>Signal</span><span>Normalized value</span><span>Consent scope</span><span>Confidence</span></div>{normalizedDemoEvents.map((event) => <div className="event-row" key={event.id}><span><i className={`event-source ${event.source}`} />{event.source === "runna" ? "Runna via Strava" : event.source === "strava" ? "Strava" : "Fitbit"}<small>{event.recordedAt}</small></span><span>{event.type}</span><b>{event.value}</b><code>{event.consentScope}</code><strong>{event.confidence}%</strong></div>)}</div>
       </section>
 
       <Dialog.Root open={selectedProvider != null} onOpenChange={(open) => !open && closeAgent()}><Dialog.Portal><Dialog.Overlay className="dialog-overlay" /><Dialog.Content className="connection-agent" aria-describedby="connection-agent-description">
         <Dialog.Title><Bot size={20} /> Connection Agent</Dialog.Title><Dialog.Description id="connection-agent-description">Guided, least-privilege setup for {selected?.name}.</Dialog.Description>
-        <div className="agent-conversation"><span className="agent-avatar"><Sparkles size={17} /></span><div><small>PaceGuard agent</small>{agentStep === 0 && <><h3>Let’s connect {selected?.name} safely.</h3><p>I’ll explain what PaceGuard needs before any authorization begins. You can disconnect and remove imported data at any time.</p></>}{agentStep === 1 && <><h3>Review requested access</h3><p>{selected?.id === "apple-health" || selected?.id === "health-connect" ? "This source requires the PaceGuard mobile companion and the operating system’s native permission sheet." : "The production flow uses provider OAuth. PaceGuard never sees the athlete’s password."}</p></>}{agentStep === 2 && <><h3>{selected?.name} is ready.</h3><p>This demo uses clearly labeled fictional records. Production data will retain source IDs, consent scopes, and deletion lineage.</p></>}</div></div>
+        <div className="agent-conversation"><span className="agent-avatar"><Sparkles size={17} /></span><div><small>PaceGuard agent</small>{agentStep === 0 && <><h3>Let’s connect {selected?.name} safely.</h3><p>I’ll explain what PaceGuard needs before any authorization begins. You can disconnect and remove imported data at any time.</p></>}{agentStep === 1 && <><h3>Review requested access</h3><p>{selected?.id === "runna" ? "Runna activities arrive through your authorized Strava or Apple Health connection. PaceGuard preserves Runna provenance and merges matching copies instead of double-counting them. Direct Runna plan access remains partner-gated." : selected?.id === "apple-health" || selected?.id === "health-connect" ? "This source requires the PaceGuard mobile companion and the operating system’s native permission sheet." : "The production flow uses provider OAuth. PaceGuard never sees the athlete’s password."}</p></>}{agentStep === 2 && <><h3>{selected?.name} is ready.</h3><p>This demo uses clearly labeled fictional records. Production data will retain source IDs, consent scopes, and deletion lineage.</p></>}</div></div>
         {agentStep === 1 && <div className="permission-list">{selected?.dataTypes.map((type) => <div key={type}><Check size={14} /><span><b>Read {type}</b><small>Used for readiness and training context</small></span><em>Read only</em></div>)}<div><X size={14} /><span><b>No write access</b><small>PaceGuard cannot change source records</small></span><em>Blocked</em></div></div>}
         <div className="connection-trust"><ShieldCheck size={16} /><span>Fictional demo data · explicit consent · encrypted token storage seam · complete disconnect/delete path</span></div>
-        <footer>{agentStep > 0 && agentStep < 2 && <button className="secondary-button" onClick={() => setAgentStep(agentStep - 1)}>Back</button>}<button className="primary-button" data-testid="connection-agent-next" onClick={() => agentStep === 0 ? setAgentStep(1) : agentStep === 1 ? finishConnection() : closeAgent()}>{agentStep === 0 ? "Review permissions" : agentStep === 1 ? (selected?.status === "bridge-required" ? "Enable demo bridge" : "Connect demo source") : "Done"}<ArrowRight size={15} /></button></footer>
+        <footer>{agentStep > 0 && agentStep < 2 && <button className="secondary-button" onClick={() => setAgentStep(agentStep - 1)}>Back</button>}<button className="primary-button" data-testid="connection-agent-next" onClick={() => agentStep === 0 ? setAgentStep(1) : agentStep === 1 ? finishConnection() : closeAgent()}>{agentStep === 0 ? "Review permissions" : agentStep === 1 ? (selected?.id === "runna" ? "Connect via Strava" : selected?.status === "bridge-required" ? "Enable demo bridge" : "Connect demo source") : "Done"}<ArrowRight size={15} /></button></footer>
         <Dialog.Close className="modal-close" aria-label="Close connection agent"><X size={18} /></Dialog.Close>
       </Dialog.Content></Dialog.Portal></Dialog.Root>
     </div>
