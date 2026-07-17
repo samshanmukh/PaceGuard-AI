@@ -156,7 +156,7 @@ function Landing({ onEnter, onGuide }: { onEnter: () => void; onGuide: () => voi
       <header className="landing-nav">
         <Logo />
         <div className="landing-meta"><span>Sports World Cup</span><i /> <span>Bay Striders Demo</span></div>
-        <button className="text-button" onClick={onEnter}>Coach sign in <ArrowRight size={15} /></button>
+        <div className="landing-access"><a href="/login?role=athlete">Athlete access</a><button className="text-button" onClick={onEnter}>Coach demo <ArrowRight size={15} /></button></div>
       </header>
 
       <section className="landing-hero">
@@ -314,6 +314,7 @@ function Sidebar({ screen, onNavigate, approved }: SidebarProps) {
         <button className="all-athletes" onClick={() => onNavigate("radar")}><UsersRound size={15} /> View all 12 <ChevronRight size={14} /></button>
       </div>
       <div className="sidebar-bottom">
+        <a className="sidebar-invite" href="/coach/invite"><Send size={16} /> Invite athlete</a>
         <button><Settings2 size={16} /> Settings</button>
         <div className="coach-chip"><span>AM</span><div><b>Alex Morgan</b><small>Head coach</small></div><ChevronRight size={14} /></div>
       </div>
