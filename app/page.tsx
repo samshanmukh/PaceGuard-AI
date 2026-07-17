@@ -432,15 +432,15 @@ function AthleteProfile({ approved, onGenerate, onBack }: { approved: boolean; o
               <defs>
                 <filter id="lineGlow"><feGaussianBlur stdDeviation="2" result="blur" /><feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge></filter>
               </defs>
-              <CartesianGrid stroke="#263142" strokeDasharray="2 5" vertical={false} />
+              <CartesianGrid stroke="#dbe2d9" strokeDasharray="2 5" vertical={false} />
               <ReferenceArea x1="Jul 14" x2="Jul 17" fill="#ff6d64" fillOpacity={0.05} />
               <ReferenceLine x="Jul 17" stroke="#ff8a71" strokeDasharray="4 4" label={{ value: "TODAY", fill: "#ff9d8d", fontSize: 9, position: "insideTopRight" }} />
               {approved && <ReferenceLine x="Jul 18" stroke="#c8ff53" strokeDasharray="4 4" label={{ value: "APPROVED", fill: "#c8ff53", fontSize: 9, position: "insideTopRight" }} />}
-              <XAxis dataKey="date" stroke="#687386" tickLine={false} axisLine={false} tick={{ fill: "#7f8a9c", fontSize: 10 }} interval={2} />
-              <YAxis domain={[0, 110]} stroke="#687386" tickLine={false} axisLine={false} tick={{ fill: "#7f8a9c", fontSize: 10 }} />
-              <Tooltip content={<ChartTooltip />} cursor={{ stroke: "#536075", strokeDasharray: "3 3" }} />
-              <Line type="monotone" dataKey="load" name="Training load" stroke="#ff746b" strokeWidth={2.5} dot={false} activeDot={{ r: 5, fill: "#ff746b", stroke: "#111827", strokeWidth: 3 }} filter="url(#lineGlow)" />
-              <Line type="monotone" dataKey="recovery" name="Recovery" stroke="#c8ff53" strokeWidth={2.3} dot={false} activeDot={{ r: 5, fill: "#c8ff53", stroke: "#111827", strokeWidth: 3 }} />
+              <XAxis dataKey="date" stroke="#9aa79d" tickLine={false} axisLine={false} tick={{ fill: "#68756b", fontSize: 10 }} interval={2} />
+              <YAxis domain={[0, 110]} stroke="#9aa79d" tickLine={false} axisLine={false} tick={{ fill: "#68756b", fontSize: 10 }} />
+              <Tooltip content={<ChartTooltip />} cursor={{ stroke: "#8c9a8f", strokeDasharray: "3 3" }} />
+              <Line type="monotone" dataKey="load" name="Training load" stroke="#e85f57" strokeWidth={2.5} dot={false} activeDot={{ r: 5, fill: "#e85f57", stroke: "#ffffff", strokeWidth: 3 }} filter="url(#lineGlow)" />
+              <Line type="monotone" dataKey="recovery" name="Recovery" stroke="#79a900" strokeWidth={2.3} dot={false} activeDot={{ r: 5, fill: "#79a900", stroke: "#ffffff", strokeWidth: 3 }} />
               <Line type="monotone" dataKey={(point) => point.sleep * 10} name="Sleep" stroke="#65a9ff" strokeWidth={1.8} strokeDasharray="5 4" dot={false} />
             </LineChart>
           </ResponsiveContainer>
