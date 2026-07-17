@@ -25,12 +25,14 @@ test("uses the standard Vercel-compatible Next.js toolchain", async () => {
 });
 
 test("keeps product, safety, and provider seams in source", async () => {
-  const [page, layout, seed, memory, workflow] = await Promise.all([
+  const [page, layout, seed, memory, workflow, integrations, integrationRoute] = await Promise.all([
     readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/layout.tsx", import.meta.url), "utf8"),
     readFile(new URL("../data/seed.ts", import.meta.url), "utf8"),
     readFile(new URL("../lib/memory.ts", import.meta.url), "utf8"),
     readFile(new URL("../lib/lyzr.ts", import.meta.url), "utf8"),
+    readFile(new URL("../lib/integrations.ts", import.meta.url), "utf8"),
+    readFile(new URL("../app/api/integrations/route.ts", import.meta.url), "utf8"),
   ]);
 
   assert.match(page, /Decision trace/);
@@ -39,6 +41,8 @@ test("keeps product, safety, and provider seams in source", async () => {
   assert.match(page, /Guided product tour/);
   assert.match(page, /start-guided-demo/);
   assert.match(page, /Human-approved AI/);
+  assert.match(page, /Data Connection Agent/);
+  assert.match(page, /Zero agent gateway/);
   assert.match(layout, /PaceGuard AI — Adaptive Athlete Intelligence/);
   assert.match(seed, /Maya Chen/);
   assert.match(seed, /readiness: 41/);
@@ -46,5 +50,9 @@ test("keeps product, safety, and provider seams in source", async () => {
   assert.match(memory, /class QdrantAthleteMemory/);
   assert.match(workflow, /Signal Analyst/);
   assert.match(workflow, /Safety Review/);
+  assert.match(integrations, /apple-health/);
+  assert.match(integrations, /health-connect/);
+  assert.match(integrations, /consentScope/);
+  assert.match(integrationRoute, /fictional-demo/);
   assert.doesNotMatch(page, /SkeletonPreview|codex-preview/);
 });

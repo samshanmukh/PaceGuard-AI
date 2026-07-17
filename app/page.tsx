@@ -12,6 +12,7 @@ import {
   BarChart3,
   Bell,
   Bot,
+  Cable,
   CalendarDays,
   Check,
   CheckCircle2,
@@ -24,10 +25,12 @@ import {
   Command,
   Database,
   Eye,
+  FileCheck,
   Gauge,
   HeartPulse,
   Info,
   LayoutDashboard,
+  Link2,
   LockKeyhole,
   MessageCircle,
   Minus,
@@ -41,6 +44,7 @@ import {
   ShieldCheck,
   SlidersHorizontal,
   Sparkles,
+  Smartphone,
   Target,
   TimerReset,
   TrendingDown,
@@ -73,9 +77,10 @@ import {
   safetyGuardrails,
 } from "@/data/seed";
 import type { PaceGuardWorkflowResult } from "@/lib/lyzr";
+import { integrationProviders, normalizedDemoEvents, type IntegrationProviderId } from "@/lib/integrations";
 import type { Athlete, RiskState } from "@/lib/types";
 
-type Screen = "landing" | "dashboard" | "profile" | "radar" | "athlete";
+type Screen = "landing" | "dashboard" | "profile" | "radar" | "athlete" | "integrations";
 type RadarRiskFilter = "all" | "attention" | "optimal" | "unknown";
 
 const stateLabels: Record<RiskState, string> = {
@@ -242,6 +247,7 @@ function Sidebar({ screen, onNavigate, approved }: SidebarProps) {
     { id: "radar" as Screen, label: "Risk radar", icon: Gauge },
     { id: "profile" as Screen, label: "Intelligence", icon: BarChart3 },
     { id: "athlete" as Screen, label: "Athlete view", icon: UserRound },
+    { id: "integrations" as Screen, label: "Data connections", icon: Cable },
   ];
   return (
     <aside className="sidebar">
@@ -556,6 +562,92 @@ function AthleteView({ approved }: { approved: boolean }) {
   );
 }
 
+function IntegrationHub() {
+  const [selectedProvider, setSelectedProvider] = useState<IntegrationProviderId | null>(null);
+  const [agentStep, setAgentStep] = useState(0);
+  const [connections, setConnections] = useState<Record<IntegrationProviderId, boolean>>({ "strava": true, "fitbit": false, "apple-health": false, "health-connect": false });
+  const [syncing, setSyncing] = useState(false);
+  const [lastSync, setLastSync] = useState("Today · 08:41");
+  const [zeroApproved, setZeroApproved] = useState(false);
+  const [spendCap, setSpendCap] = useState("0.25");
+
+  const openAgent = (provider: IntegrationProviderId) => { setSelectedProvider(provider); setAgentStep(0); };
+  const closeAgent = () => { setSelectedProvider(null); setAgentStep(0); };
+  const syncNow = async () => {
+    setSyncing(true);
+    await fetch("/api/integrations", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "sync" }) }).catch(() => null);
+    setLastSync("Just now · 4 records normalized");
+    setSyncing(false);
+  };
+  const finishConnection = async () => {
+    if (!selectedProvider) return;
+    await fetch("/api/integrations", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "connect", provider: selectedProvider }) }).catch(() => null);
+    setConnections((current) => ({ ...current, [selectedProvider]: true }));
+    setAgentStep(2);
+  };
+  const disconnect = async (provider: IntegrationProviderId) => {
+    await fetch("/api/integrations", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "disconnect", provider }) }).catch(() => null);
+    setConnections((current) => ({ ...current, [provider]: false }));
+  };
+  const selected = integrationProviders.find((provider) => provider.id === selectedProvider);
+
+  return (
+    <div className="screen-shell integrations-screen">
+      <section className="page-intro integration-intro"><div><span className="eyebrow">Consent-first data layer</span><h2>Data Connection Agent</h2><p>Connect athlete sources, normalize every signal, and keep permission and provenance visible.</p></div><button className="primary-button" data-testid="sync-all-sources" onClick={syncNow} disabled={syncing}><RefreshCcw size={15} className={syncing ? "spin" : ""} /> {syncing ? "Syncing sources…" : "Sync all sources"}</button></section>
+
+      <section className="integration-health-strip">
+        <div><span><i className="healthy" /> Connection health</span><strong>1 connected</strong><small>3 ready to configure</small></div>
+        <div><span><Database size={14} /> Last normalization</span><strong>{lastSync}</strong><small>1 duplicate safely merged</small></div>
+        <div><span><ShieldCheck size={14} /> Consent posture</span><strong>Least privilege</strong><small>Read-only scopes · coach visible</small></div>
+        <div><span><Cable size={14} /> Agent status</span><strong>Monitoring</strong><small>No silent permission changes</small></div>
+      </section>
+
+      <div className="integration-layout">
+        <section>
+          <div className="section-heading"><div><span className="eyebrow">Provider adapters</span><h3>Connect athlete data</h3><p>Every demo record is fictional. Production OAuth activates only when credentials are configured.</p></div></div>
+          <div className="provider-grid">
+            {integrationProviders.map((provider) => {
+              const connected = connections[provider.id];
+              const Icon = provider.id === "strava" ? Activity : provider.id === "fitbit" ? Watch : Smartphone;
+              return <article className={`provider-card ${connected ? "connected" : ""}`} key={provider.id}>
+                <header><span className={`provider-icon ${provider.id}`}><Icon size={20} /></span><span className={`provider-status ${connected ? "connected" : provider.status}`}><i /> {connected ? "Connected" : provider.status === "bridge-required" ? "Native bridge" : "Available"}</span></header>
+                <span className="provider-category">{provider.category}</span><h3>{provider.name}</h3><p>{provider.description}</p>
+                <div className="provider-scopes">{provider.dataTypes.map((type) => <span key={type}>{type}</span>)}</div>
+                <div className="provider-source"><FileCheck size={14} /><span><b>{provider.sourceLabel}</b>{connected && <small>Last sync · {provider.lastSync ?? "just now"}</small>}</span></div>
+                <footer>{connected ? <><button className="provider-secondary" onClick={() => openAgent(provider.id)}>Review access</button><button className="provider-danger" onClick={() => disconnect(provider.id)}>Disconnect</button></> : <button className="provider-connect" data-testid={`connect-${provider.id}`} onClick={() => openAgent(provider.id)}><Link2 size={14} /> Connect with agent</button>}</footer>
+              </article>;
+            })}
+          </div>
+        </section>
+
+        <aside className="zero-agent-panel">
+          <div className="zero-agent-head"><span><Bot size={18} /></span><div><small>Optional capability layer</small><h3>Zero agent gateway</h3></div><span className="zero-badge">zero.xyz</span></div>
+          <p>Discover specialist analysis only when a coach explicitly approves the capability, payload, and maximum spend.</p>
+          <div className="zero-capability"><div><span>Biomechanics enrichment</span><b>RTK Motion analysis</b></div><span>$0.50 / call</span></div>
+          <div className="zero-policy"><ShieldCheck size={16} /><span><b>No automatic health-data sharing</b><small>Selected fields only · one run · auditable</small></span></div>
+          <label>Maximum spend per approved run<select value={spendCap} onChange={(event) => setSpendCap(event.target.value)}><option value="0.10">$0.10 USDC</option><option value="0.25">$0.25 USDC</option><option value="0.50">$0.50 USDC</option></select></label>
+          <button className={zeroApproved ? "zero-approved" : "zero-approve"} onClick={() => setZeroApproved((value) => !value)}>{zeroApproved ? <><CheckCircle2 size={16} /> Capability approved for one run</> : <><LockKeyhole size={16} /> Review and approve capability</>}</button>
+          <small className="zero-footnote">Marketplace availability changes. PaceGuard re-searches Zero before every production call.</small>
+        </aside>
+      </div>
+
+      <section className="normalized-panel panel">
+        <div className="panel-heading"><div><span className="eyebrow">Normalized athlete event stream</span><h3>One schema, traceable sources</h3><p>Duplicate-safe records ready for PaceGuard’s decision workflow.</p></div><span className="live-chip"><i /> Fictional demo feed</span></div>
+        <div className="event-table"><div className="event-row event-head"><span>Source</span><span>Signal</span><span>Normalized value</span><span>Consent scope</span><span>Confidence</span></div>{normalizedDemoEvents.map((event) => <div className="event-row" key={event.id}><span><i className={`event-source ${event.source}`} />{event.source === "strava" ? "Strava" : "Fitbit"}<small>{event.recordedAt}</small></span><span>{event.type}</span><b>{event.value}</b><code>{event.consentScope}</code><strong>{event.confidence}%</strong></div>)}</div>
+      </section>
+
+      <Dialog.Root open={selectedProvider != null} onOpenChange={(open) => !open && closeAgent()}><Dialog.Portal><Dialog.Overlay className="dialog-overlay" /><Dialog.Content className="connection-agent" aria-describedby="connection-agent-description">
+        <Dialog.Title><Bot size={20} /> Connection Agent</Dialog.Title><Dialog.Description id="connection-agent-description">Guided, least-privilege setup for {selected?.name}.</Dialog.Description>
+        <div className="agent-conversation"><span className="agent-avatar"><Sparkles size={17} /></span><div><small>PaceGuard agent</small>{agentStep === 0 && <><h3>Let’s connect {selected?.name} safely.</h3><p>I’ll explain what PaceGuard needs before any authorization begins. You can disconnect and remove imported data at any time.</p></>}{agentStep === 1 && <><h3>Review requested access</h3><p>{selected?.id === "apple-health" || selected?.id === "health-connect" ? "This source requires the PaceGuard mobile companion and the operating system’s native permission sheet." : "The production flow uses provider OAuth. PaceGuard never sees the athlete’s password."}</p></>}{agentStep === 2 && <><h3>{selected?.name} is ready.</h3><p>This demo uses clearly labeled fictional records. Production data will retain source IDs, consent scopes, and deletion lineage.</p></>}</div></div>
+        {agentStep === 1 && <div className="permission-list">{selected?.dataTypes.map((type) => <div key={type}><Check size={14} /><span><b>Read {type}</b><small>Used for readiness and training context</small></span><em>Read only</em></div>)}<div><X size={14} /><span><b>No write access</b><small>PaceGuard cannot change source records</small></span><em>Blocked</em></div></div>}
+        <div className="connection-trust"><ShieldCheck size={16} /><span>Fictional demo data · explicit consent · encrypted token storage seam · complete disconnect/delete path</span></div>
+        <footer>{agentStep > 0 && agentStep < 2 && <button className="secondary-button" onClick={() => setAgentStep(agentStep - 1)}>Back</button>}<button className="primary-button" data-testid="connection-agent-next" onClick={() => agentStep === 0 ? setAgentStep(1) : agentStep === 1 ? finishConnection() : closeAgent()}>{agentStep === 0 ? "Review permissions" : agentStep === 1 ? (selected?.status === "bridge-required" ? "Enable demo bridge" : "Connect demo source") : "Done"}<ArrowRight size={15} /></button></footer>
+        <Dialog.Close className="modal-close" aria-label="Close connection agent"><X size={18} /></Dialog.Close>
+      </Dialog.Content></Dialog.Portal></Dialog.Root>
+    </div>
+  );
+}
+
 function ArchitectureModal({ open, onOpenChange }: { open: boolean; onOpenChange: (open: boolean) => void }) {
   const stages = [
     { icon: Watch, label: "Signals", detail: "Wearables + check-ins" },
@@ -669,10 +761,11 @@ function ApprovalToast({ visible, onClose }: { visible: boolean; onClose: () => 
 
 const guidedDemoSteps = [
   { kicker: "01 · Coach command", title: "Start with the decision, not the data", body: "The coach sees two athletes needing attention. Maya is ranked first because four signals converge before a high-speed session." },
-  { kicker: "02 · Explainability", title: "Open Maya’s evidence", body: "PaceGuard separates signals from diagnosis: load, sleep, recovery, and Maya’s own note are visible with confidence and missing context." },
-  { kicker: "03 · Team awareness", title: "Scan the full squad", body: "Risk Radar lets a coach compare readiness, workload change, race proximity, and incomplete data without losing the individual story." },
-  { kicker: "04 · Human-approved AI", title: "Generate the safer option", body: "Four agents analyze signals, retrieve comparable cases, draft an adjustment, and apply safety guardrails. The coach still makes the final call." },
-  { kicker: "05 · Athlete experience", title: "Close the communication loop", body: "The athlete gets a calm explanation, the approved workout, and a one-tap check-in—not a frightening risk score or medical claim." },
+  { kicker: "02 · Connection agent", title: "Bring every signal into one governed stream", body: "The agent explains permissions, connects provider adapters, normalizes records, and preserves consent scope and provenance." },
+  { kicker: "03 · Explainability", title: "Open Maya’s evidence", body: "PaceGuard separates signals from diagnosis: load, sleep, recovery, and Maya’s own note are visible with confidence and missing context." },
+  { kicker: "04 · Team awareness", title: "Scan the full squad", body: "Risk Radar lets a coach compare readiness, workload change, race proximity, and incomplete data without losing the individual story." },
+  { kicker: "05 · Human-approved AI", title: "Generate the safer option", body: "Four agents analyze signals, retrieve comparable cases, draft an adjustment, and apply safety guardrails. The coach still makes the final call." },
+  { kicker: "06 · Athlete experience", title: "Close the communication loop", body: "The athlete gets a calm explanation, the approved workout, and a one-tap check-in—not a frightening risk score or medical claim." },
 ];
 
 function GuidedDemo({ step, onStep, onClose }: { step: number; onStep: (step: number) => void; onClose: () => void }) {
@@ -680,7 +773,7 @@ function GuidedDemo({ step, onStep, onClose }: { step: number; onStep: (step: nu
   return (
     <motion.aside className="guided-demo" data-testid="guided-demo" initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }}>
       <div className="guided-demo-top"><span><CirclePlay size={15} /> Guided product tour</span><button onClick={onClose} aria-label="Close guided demo"><X size={16} /></button></div>
-      <div className="guided-progress" aria-label={`Step ${step + 1} of ${guidedDemoSteps.length}`}>{guidedDemoSteps.map((_, index) => <i key={index} className={index <= step ? "active" : ""} />)}</div>
+      <div className="guided-progress" style={{ gridTemplateColumns: `repeat(${guidedDemoSteps.length}, 1fr)` }} aria-label={`Step ${step + 1} of ${guidedDemoSteps.length}`}>{guidedDemoSteps.map((_, index) => <i key={index} className={index <= step ? "active" : ""} />)}</div>
       <span className="guided-kicker">{current.kicker}</span>
       <h3>{current.title}</h3>
       <p>{current.body}</p>
@@ -701,10 +794,10 @@ export default function Home() {
   const approve = () => { setApproved(true); setDrawerOpen(false); setToast(true); window.setTimeout(() => setToast(false), 5200); };
 
   const setDemoStep = (step: number) => {
-    const destinations: Screen[] = ["dashboard", "profile", "radar", "profile", "athlete"];
+    const destinations: Screen[] = ["dashboard", "integrations", "profile", "radar", "profile", "athlete"];
     setGuidedStep(step);
     setScreen(destinations[step]);
-    setDrawerOpen(step === 3);
+    setDrawerOpen(step === 4);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
@@ -712,7 +805,7 @@ export default function Home() {
 
   if (screen === "landing") return <Landing onEnter={() => navigate("dashboard")} onGuide={startGuidedDemo} />;
 
-  const title = screen === "dashboard" ? "Coach Command" : screen === "profile" ? "Athlete Intelligence" : screen === "radar" ? "Risk Radar" : "Athlete View";
+  const title = screen === "dashboard" ? "Coach Command" : screen === "profile" ? "Athlete Intelligence" : screen === "radar" ? "Risk Radar" : screen === "integrations" ? "Data Connections" : "Athlete View";
   return (
     <main className="app-shell">
       <Sidebar screen={screen} onNavigate={navigate} approved={approved} />
@@ -724,6 +817,7 @@ export default function Home() {
             {screen === "profile" && <AthleteProfile approved={approved} onGenerate={() => setDrawerOpen(true)} onBack={() => navigate("dashboard")} />}
             {screen === "radar" && <RiskRadar onMaya={() => navigate("profile")} />}
             {screen === "athlete" && <AthleteView approved={approved} />}
+            {screen === "integrations" && <IntegrationHub />}
           </motion.div>
         </AnimatePresence>
       </section>
@@ -731,7 +825,7 @@ export default function Home() {
       <ArchitectureModal open={architectureOpen} onOpenChange={setArchitectureOpen} />
       <ApprovalToast visible={toast} onClose={() => setToast(false)} />
       {guidedStep != null && <GuidedDemo step={guidedStep} onStep={setDemoStep} onClose={() => { setGuidedStep(null); setDrawerOpen(false); }} />}
-      <nav className="mobile-app-nav" aria-label="Mobile navigation"><button className={screen === "dashboard" ? "active" : ""} onClick={() => navigate("dashboard")}><LayoutDashboard size={18} /><span>Command</span></button><button className={screen === "radar" ? "active" : ""} onClick={() => navigate("radar")}><Gauge size={18} /><span>Radar</span></button><button className={screen === "profile" ? "active" : ""} onClick={() => navigate("profile")}><BarChart3 size={18} /><span>Maya</span></button><button className={screen === "athlete" ? "active" : ""} onClick={() => navigate("athlete")}><UserRound size={18} /><span>Athlete</span></button></nav>
+      <nav className="mobile-app-nav" aria-label="Mobile navigation"><button className={screen === "dashboard" ? "active" : ""} onClick={() => navigate("dashboard")}><LayoutDashboard size={18} /><span>Command</span></button><button className={screen === "radar" ? "active" : ""} onClick={() => navigate("radar")}><Gauge size={18} /><span>Radar</span></button><button className={screen === "profile" ? "active" : ""} onClick={() => navigate("profile")}><BarChart3 size={18} /><span>Maya</span></button><button className={screen === "integrations" ? "active" : ""} onClick={() => navigate("integrations")}><Cable size={18} /><span>Connect</span></button><button className={screen === "athlete" ? "active" : ""} onClick={() => navigate("athlete")}><UserRound size={18} /><span>Athlete</span></button></nav>
     </main>
   );
 }

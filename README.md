@@ -53,6 +53,9 @@ For exact judge narration and timing, see [DEMO_SCRIPT.md](./DEMO_SCRIPT.md).
 - **Recommendation workspace** — sequential multi-agent execution, old/new plan comparison, safety review, manual adjustment, check-in request, and coach approval.
 - **Team Risk Radar** — an explorable squad field with filters, readiness state, workload change, data gaps, and race proximity.
 - **Athlete View** — responsive athlete-facing session, plain-language rationale, soreness scale, notes, and escalation guidance.
+- **Data Connection Agent** — consent-first Strava/Fitbit OAuth seams, Apple Health/Health Connect native-bridge guidance, normalized fictional events, provenance, and sync health.
+- **Zero capability gateway** — explicit per-run approval, visible data-sharing policy, and a hard maximum-spend control before specialist analysis.
+- **Guided product tour** — a six-step demo path through command, connections, evidence, radar, human-approved AI, and athlete communication.
 - **Architecture modal** — compact system view from wearable signals to an approved athlete plan.
 
 ## Demo data
@@ -129,6 +132,8 @@ The demo deliberately falls back locally and sends no athlete data to an externa
 - Local Next.js API route for the decision workflow
 - Standard Next.js production build for zero-configuration Vercel deployment
 - Provider seams for Lyzr and Qdrant
+- Normalized wearable-provider contract for Strava, Fitbit, Apple HealthKit, and Android Health Connect
+- Zero.xyz capability governance with explicit consent and spend caps
 
 ## Project map
 
@@ -149,7 +154,7 @@ TODO_PRODUCTION.md        Integrations, privacy, and security path
 
 ## Optional environment variables
 
-The app needs none for the local demo. See `.env.example` for the future Qdrant and Lyzr integration seams.
+The app needs none for the local demo. See `.env.example` for Qdrant, Lyzr, Strava, Fitbit, and server-side Zero integration seams. Apple HealthKit and Android Health Connect require native companion apps; the web demo represents those handoff contracts honestly.
 
 ## Hackathon positioning
 
