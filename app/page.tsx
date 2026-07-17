@@ -22,6 +22,7 @@ import {
   CircleDashed,
   CirclePlay,
   Clock3,
+  CloudCog,
   Command,
   Database,
   Eye,
@@ -226,6 +227,41 @@ function Landing({ onEnter, onGuide }: { onEnter: () => void; onGuide: () => voi
           <span>06:00</span><span>08:00</span><span>10:00</span><span>12:00</span><span>14:00</span><span>16:00</span>
         </div>
       </motion.section>
+
+      <section className="landing-showcase" aria-label="Product capabilities and technology">
+        <div className="landing-proof-head"><div><span className="eyebrow">Built for the decision between the data and the workout</span><h2>One governed loop for the whole performance team.</h2></div><p>PaceGuard connects athlete signals, retrieves relevant memory, proposes a safer action, and keeps the coach responsible for the final decision.</p></div>
+
+        <div className="landing-feature-grid">
+          <article><span><Cable size={20} /></span><small>01 · Connect</small><h3>Consent-first athlete data</h3><p>A guided agent connects provider adapters, explains permissions, normalizes records, and preserves source provenance.</p><b>Strava · Fitbit · HealthKit · Health Connect</b></article>
+          <article><span><Eye size={20} /></span><small>02 · Understand</small><h3>Explainable risk signals</h3><p>Workload, sleep, recovery, and athlete feedback stay visible—alongside confidence and missing context.</p><b>Not diagnosis · Evidence always visible</b></article>
+          <article><span><Bot size={20} /></span><small>03 · Decide</small><h3>Multi-agent plan generation</h3><p>Specialist agents analyze signals, retrieve comparable cases, draft an adjustment, and enforce safety language.</p><b>Visible trace · Coach approval required</b></article>
+          <article><span><UserCheck size={20} /></span><small>04 · Act</small><h3>Close the athlete loop</h3><p>The athlete receives a calm explanation, the approved session, and a fast way to report how they feel.</p><b>Role-scoped · Human-controlled</b></article>
+        </div>
+
+        <div className="landing-stack-block">
+          <div className="landing-section-title"><span className="eyebrow">Production-minded stack</span><h2>Fast demo. Real extension points.</h2><p>The local experience runs without credentials, while every external system has a typed adapter and an honest activation boundary.</p></div>
+          <div className="tech-stack-grid">
+            <div><span>Product</span><b>Next.js 16</b><small>App Router, React 19, TypeScript</small></div>
+            <div><span>Interface</span><b>Framer Motion</b><small>Radix UI, Recharts, Lucide</small></div>
+            <div><span>Decision AI</span><b>Lyzr adapter</b><small>Four governed specialist agents</small></div>
+            <div><span>Memory</span><b>Qdrant seam</b><small>Semantic athlete case retrieval</small></div>
+            <div><span>Capabilities</span><b>Zero.xyz</b><small>Approval-gated specialist services</small></div>
+            <div><span>Deployment</span><b>Vercel</b><small>Native Next.js production runtime</small></div>
+          </div>
+        </div>
+
+        <div className="sponsor-tools-block">
+          <div className="landing-section-title"><span className="eyebrow">Sponsor tools in the product</span><h2>Every tool has a visible job.</h2><p>No logo wall. Each sponsor technology maps to a product capability the coach can inspect during the demo.</p></div>
+          <div className="sponsor-tools-grid">
+            <article className="lyzr"><header><span><Bot size={21} /></span><div><small>Agent orchestration</small><h3>Lyzr</h3></div><i>Decision workflow</i></header><p>Coordinates Signal Analyst, Evidence, Plan, and Safety agents behind one stable response contract.</p><footer><b>See it in</b><span>Generate safer plan → Decision Trace</span></footer></article>
+            <article className="qdrant"><header><span><Database size={21} /></span><div><small>Semantic memory</small><h3>Qdrant</h3></div><i>Athlete intelligence</i></header><p>Retrieves comparable athlete situations by signal pattern, race proximity, profile, and coaching context.</p><footer><b>See it in</b><span>Athlete Intelligence → Comparable situations</span></footer></article>
+            <article className="zero"><header><span><Zap size={21} /></span><div><small>Agent capabilities</small><h3>Zero.xyz</h3></div><i>Approval gateway</i></header><p>Discovers optional specialist analysis with explicit payload review, one-run consent, and a hard spend limit.</p><footer><b>See it in</b><span>Data Connections → Zero agent gateway</span></footer></article>
+            <article className="vercel"><header><span><CloudCog size={21} /></span><div><small>Product runtime</small><h3>Vercel</h3></div><i>Live deployment</i></header><p>Runs the native Next.js application, server-rendered product surfaces, and local decision/integration APIs.</p><footer><b>See it in</b><span>This production demo</span></footer></article>
+          </div>
+        </div>
+
+        <div className="landing-final-cta"><div><span className="eyebrow">Ready for the walkthrough</span><h2>See the complete decision in two minutes.</h2><p>Follow the guided path from connected data to a coach-approved athlete plan.</p></div><button data-testid="start-guided-demo-secondary" className="primary-button large" onClick={onGuide}>Start guided demo <ArrowUpRight size={18} /></button></div>
+      </section>
 
       <footer className="landing-footer">
         <span>Decision intelligence for endurance performance.</span>
