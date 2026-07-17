@@ -19,6 +19,7 @@ import {
   ChevronRight,
   CircleAlert,
   CircleDashed,
+  CirclePlay,
   Clock3,
   Command,
   Database,
@@ -140,7 +141,7 @@ function MiniSparkline({ values, tone = "lime" }: { values: number[]; tone?: "li
   );
 }
 
-function Landing({ onEnter }: { onEnter: () => void }) {
+function Landing({ onEnter, onGuide }: { onEnter: () => void; onGuide: () => void }) {
   const reduceMotion = useReducedMotion();
   const bars = [31, 45, 39, 54, 62, 48, 71, 57, 68, 74, 66, 82, 76, 91, 69, 63, 78, 88, 94, 71, 84, 96, 78, 89, 74, 92, 86, 68, 79, 88, 73, 90];
   return (
@@ -184,6 +185,7 @@ function Landing({ onEnter }: { onEnter: () => void }) {
           <button className="primary-button large" data-testid="open-command-center" onClick={onEnter}>
             Open Coach Command Center <ArrowUpRight size={18} />
           </button>
+          <button className="tour-button" data-testid="start-guided-demo" onClick={onGuide}><CirclePlay size={17} /> Take the 2-minute tour</button>
           <span><ShieldCheck size={16} /> Coach-controlled. Safety-first.</span>
         </motion.div>
       </section>
@@ -277,12 +279,13 @@ function Sidebar({ screen, onNavigate, approved }: SidebarProps) {
   );
 }
 
-function AppHeader({ title, onArchitecture }: { title: string; onArchitecture: () => void }) {
+function AppHeader({ title, onArchitecture, onGuidedDemo }: { title: string; onArchitecture: () => void; onGuidedDemo: () => void }) {
   return (
     <header className="app-header">
       <div className="mobile-logo"><Logo compact /><b>{title}</b></div>
       <div className="breadcrumbs"><span>Bay Striders</span><ChevronRight size={13} /><b>{title}</b></div>
       <div className="header-actions">
+        <button className="guided-demo-trigger" onClick={onGuidedDemo}><CirclePlay size={15} /> Guided demo</button>
         <button className="architecture-trigger" onClick={onArchitecture}><Network size={15} /> How it works</button>
         <button className="icon-button" aria-label="Notifications"><Bell size={17} /><i /></button>
         <span className="sync-chip"><i /> All systems synced</span>
@@ -664,24 +667,57 @@ function ApprovalToast({ visible, onClose }: { visible: boolean; onClose: () => 
   return <AnimatePresence>{visible && <motion.div className="approval-toast" data-testid="approval-success" initial={{ opacity: 0, y: 18, scale: 0.96 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 10 }}><span><CheckCircle2 size={21} /></span><div><b>Plan approved</b><p>Maya’s timeline updated · athlete notified</p></div><button onClick={onClose} aria-label="Dismiss notification"><X size={15} /></button></motion.div>}</AnimatePresence>;
 }
 
+const guidedDemoSteps = [
+  { kicker: "01 · Coach command", title: "Start with the decision, not the data", body: "The coach sees two athletes needing attention. Maya is ranked first because four signals converge before a high-speed session." },
+  { kicker: "02 · Explainability", title: "Open Maya’s evidence", body: "PaceGuard separates signals from diagnosis: load, sleep, recovery, and Maya’s own note are visible with confidence and missing context." },
+  { kicker: "03 · Team awareness", title: "Scan the full squad", body: "Risk Radar lets a coach compare readiness, workload change, race proximity, and incomplete data without losing the individual story." },
+  { kicker: "04 · Human-approved AI", title: "Generate the safer option", body: "Four agents analyze signals, retrieve comparable cases, draft an adjustment, and apply safety guardrails. The coach still makes the final call." },
+  { kicker: "05 · Athlete experience", title: "Close the communication loop", body: "The athlete gets a calm explanation, the approved workout, and a one-tap check-in—not a frightening risk score or medical claim." },
+];
+
+function GuidedDemo({ step, onStep, onClose }: { step: number; onStep: (step: number) => void; onClose: () => void }) {
+  const current = guidedDemoSteps[step];
+  return (
+    <motion.aside className="guided-demo" data-testid="guided-demo" initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }}>
+      <div className="guided-demo-top"><span><CirclePlay size={15} /> Guided product tour</span><button onClick={onClose} aria-label="Close guided demo"><X size={16} /></button></div>
+      <div className="guided-progress" aria-label={`Step ${step + 1} of ${guidedDemoSteps.length}`}>{guidedDemoSteps.map((_, index) => <i key={index} className={index <= step ? "active" : ""} />)}</div>
+      <span className="guided-kicker">{current.kicker}</span>
+      <h3>{current.title}</h3>
+      <p>{current.body}</p>
+      <footer><span>{step + 1} / {guidedDemoSteps.length}</span><div>{step > 0 && <button className="guided-back" onClick={() => onStep(step - 1)}>Back</button>}<button className="guided-next" onClick={() => step === guidedDemoSteps.length - 1 ? onClose() : onStep(step + 1)}>{step === guidedDemoSteps.length - 1 ? "Finish tour" : "Next feature"}<ArrowRight size={14} /></button></div></footer>
+    </motion.aside>
+  );
+}
+
 export default function Home() {
   const [screen, setScreen] = useState<Screen>("landing");
   const [approved, setApproved] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [architectureOpen, setArchitectureOpen] = useState(false);
   const [toast, setToast] = useState(false);
+  const [guidedStep, setGuidedStep] = useState<number | null>(null);
 
   const navigate = (next: Screen) => { setScreen(next); window.scrollTo({ top: 0, behavior: "smooth" }); };
   const approve = () => { setApproved(true); setDrawerOpen(false); setToast(true); window.setTimeout(() => setToast(false), 5200); };
 
-  if (screen === "landing") return <Landing onEnter={() => navigate("dashboard")} />;
+  const setDemoStep = (step: number) => {
+    const destinations: Screen[] = ["dashboard", "profile", "radar", "profile", "athlete"];
+    setGuidedStep(step);
+    setScreen(destinations[step]);
+    setDrawerOpen(step === 3);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const startGuidedDemo = () => setDemoStep(0);
+
+  if (screen === "landing") return <Landing onEnter={() => navigate("dashboard")} onGuide={startGuidedDemo} />;
 
   const title = screen === "dashboard" ? "Coach Command" : screen === "profile" ? "Athlete Intelligence" : screen === "radar" ? "Risk Radar" : "Athlete View";
   return (
     <main className="app-shell">
       <Sidebar screen={screen} onNavigate={navigate} approved={approved} />
       <section className="app-main">
-        <AppHeader title={title} onArchitecture={() => setArchitectureOpen(true)} />
+        <AppHeader title={title} onArchitecture={() => setArchitectureOpen(true)} onGuidedDemo={startGuidedDemo} />
         <AnimatePresence mode="wait" initial={false}>
           <motion.div key={screen} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -4 }} transition={{ duration: 0.22 }}>
             {screen === "dashboard" && <Dashboard approved={approved} onMaya={() => navigate("profile")} onGenerate={() => setDrawerOpen(true)} />}
@@ -694,6 +730,7 @@ export default function Home() {
       <RecommendationDrawer open={drawerOpen} onOpenChange={setDrawerOpen} onApprove={approve} approved={approved} />
       <ArchitectureModal open={architectureOpen} onOpenChange={setArchitectureOpen} />
       <ApprovalToast visible={toast} onClose={() => setToast(false)} />
+      {guidedStep != null && <GuidedDemo step={guidedStep} onStep={setDemoStep} onClose={() => { setGuidedStep(null); setDrawerOpen(false); }} />}
       <nav className="mobile-app-nav" aria-label="Mobile navigation"><button className={screen === "dashboard" ? "active" : ""} onClick={() => navigate("dashboard")}><LayoutDashboard size={18} /><span>Command</span></button><button className={screen === "radar" ? "active" : ""} onClick={() => navigate("radar")}><Gauge size={18} /><span>Radar</span></button><button className={screen === "profile" ? "active" : ""} onClick={() => navigate("profile")}><BarChart3 size={18} /><span>Maya</span></button><button className={screen === "athlete" ? "active" : ""} onClick={() => navigate("athlete")}><UserRound size={18} /><span>Athlete</span></button></nav>
     </main>
   );

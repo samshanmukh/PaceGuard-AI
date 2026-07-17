@@ -36,6 +36,9 @@ test("keeps product, safety, and provider seams in source", async () => {
   assert.match(page, /Decision trace/);
   assert.match(page, /coach approval required/i);
   assert.match(page, /Team Risk Radar/);
+  assert.match(page, /Guided product tour/);
+  assert.match(page, /start-guided-demo/);
+  assert.match(page, /Human-approved AI/);
   assert.match(layout, /PaceGuard AI — Adaptive Athlete Intelligence/);
   assert.match(seed, /Maya Chen/);
   assert.match(seed, /readiness: 41/);
