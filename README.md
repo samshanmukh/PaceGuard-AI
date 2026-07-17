@@ -8,7 +8,7 @@ The demo is built around the fictional **Bay Striders** elite running club and i
 
 ## Quick start
 
-Requirements: Node.js 22.13 or newer.
+Requirements: Node.js 22.x.
 
 ```bash
 npm install
@@ -16,6 +16,15 @@ npm run dev
 ```
 
 Open the local URL printed by the development server. No API keys, database, sign-in, or internet connection are required for the demo.
+
+## Deploy to Vercel
+
+1. Import `samshanmukh/PaceGuard-AI` in Vercel.
+2. Keep the detected **Next.js** framework preset and repository root.
+3. Leave the build command as `next build` and the output directory unset.
+4. Deploy. The demo requires no environment variables.
+
+Optional Qdrant or hosted Lyzr credentials can be added later in Vercel Project Settings. Without them, PaceGuard uses its deterministic local workflow and seeded semantic memory.
 
 Useful checks:
 
@@ -118,7 +127,7 @@ The demo deliberately falls back locally and sends no athlete data to an externa
 - Recharts for the 21-day evidence timeline
 - Lucide icons
 - Local Next.js API route for the decision workflow
-- Cloudflare-compatible vinext build for optional Sites deployment
+- Standard Next.js production build for zero-configuration Vercel deployment
 - Provider seams for Lyzr and Qdrant
 
 ## Project map

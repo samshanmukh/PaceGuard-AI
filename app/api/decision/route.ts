@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { runPaceGuardWorkflow } from "@/lib/lyzr";
 
+export const runtime = "nodejs";
+
 export async function POST(request: Request) {
   const body = (await request.json().catch(() => ({}))) as { athleteId?: string };
   if (body.athleteId && body.athleteId !== "maya-chen") {
