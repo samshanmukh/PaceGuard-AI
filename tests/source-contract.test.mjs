@@ -50,6 +50,9 @@ test("keeps product, safety, and provider seams in source", async () => {
   assert.match(memory, /class QdrantAthleteMemory/);
   assert.match(workflow, /Signal Analyst/);
   assert.match(workflow, /Safety Review/);
+  assert.match(workflow, /agent-prod\.studio\.lyzr\.ai\/v3\/inference\/chat/);
+  assert.match(workflow, /LYZR_AGENT_ID/);
+  assert.match(workflow, /lyzr-live-v1/);
   assert.match(integrations, /apple-health/);
   assert.match(integrations, /health-connect/);
   assert.match(integrations, /Runna/);

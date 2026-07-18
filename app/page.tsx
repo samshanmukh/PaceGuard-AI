@@ -768,7 +768,7 @@ function RecommendationDrawer({ open, onOpenChange, onApprove, approved }: { ope
                   return <motion.div className={`agent-step ${status}`} key={step.id} initial={{ opacity: 0.6 }} animate={{ opacity: status === "pending" ? 0.55 : 1 }}><div className="agent-index">{status === "complete" ? <Check size={14} /> : status === "active" ? <CircleDashed size={15} /> : `0${index + 1}`}</div><span className="agent-icon"><Icon size={16} /></span><div><b>{step.name}</b><small>{step.role}</small>{status === "complete" && <motion.p initial={{ opacity: 0, y: 3 }} animate={{ opacity: 1, y: 0 }}>{step.finding}</motion.p>}</div>{status === "active" && <span className="analyzing">Analyzing<i /><i /><i /></span>}</motion.div>;
                 })}
               </div>
-              <div className="workflow-source"><Database size={14} /><span><b>Athlete Memory</b>{workflow?.memoryProvider ?? "Local semantic fallback"} · {workflow?.evidenceCount ?? 3} relevant cases</span><strong>94% top match</strong></div>
+              <div className="workflow-source"><Database size={14} /><span><b>{workflow?.workflow === "lyzr-live-v1" ? "Live Lyzr Agent + Athlete Memory" : "Athlete Memory · Local fallback"}</b>{workflow?.memoryProvider ?? "Local semantic fallback"} · {workflow?.evidenceCount ?? 3} relevant cases</span><strong>{workflow?.workflow === "lyzr-live-v1" ? "LIVE" : "94% top match"}</strong></div>
             </section>
 
             <section className={`plan-output ${complete ? "visible" : ""}`}>
