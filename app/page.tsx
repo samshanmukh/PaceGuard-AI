@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import {
@@ -80,6 +80,8 @@ import {
 import type { PaceGuardWorkflowResult } from "@/lib/lyzr";
 import { integrationProviders, normalizedDemoEvents, type IntegrationProviderId } from "@/lib/integrations";
 import type { Athlete, RiskState } from "@/lib/types";
+import type { PaceGuardEvent } from "@/lib/insforge";
+import { publishPaceGuardEvent, usePaceGuardRealtime } from "@/lib/use-paceguard-realtime";
 
 type Screen = "landing" | "dashboard" | "profile" | "radar" | "athlete" | "integrations";
 type RadarRiskFilter = "all" | "attention" | "optimal" | "unknown";
@@ -805,8 +807,8 @@ function RecommendationDrawer({ open, onOpenChange, onApprove, approved }: { ope
   );
 }
 
-function ApprovalToast({ visible, onClose }: { visible: boolean; onClose: () => void }) {
-  return <AnimatePresence>{visible && <motion.div className="approval-toast" data-testid="approval-success" initial={{ opacity: 0, y: 18, scale: 0.96 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 10 }}><span><CheckCircle2 size={21} /></span><div><b>Plan approved</b><p>Maya’s timeline updated · athlete notified</p></div><button onClick={onClose} aria-label="Dismiss notification"><X size={15} /></button></motion.div>}</AnimatePresence>;
+function ApprovalToast({ visible, onClose, title = "Plan approved", detail = "Maya’s timeline updated · athlete notified" }: { visible: boolean; onClose: () => void; title?: string; detail?: string }) {
+  return <AnimatePresence>{visible && <motion.div className="approval-toast" data-testid="approval-success" initial={{ opacity: 0, y: 18, scale: 0.96 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 10 }}><span><CheckCircle2 size={21} /></span><div><b>{title}</b><p>{detail}</p></div><button onClick={onClose} aria-label="Dismiss notification"><X size={15} /></button></motion.div>}</AnimatePresence>;
 }
 
 const guidedDemoSteps = [
@@ -838,10 +840,28 @@ export default function Home() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [architectureOpen, setArchitectureOpen] = useState(false);
   const [toast, setToast] = useState(false);
+  const [toastCopy, setToastCopy] = useState({ title: "Plan approved", detail: "Maya’s timeline updated · athlete notified" });
   const [guidedStep, setGuidedStep] = useState<number | null>(null);
 
+  const onRealtimeEvent = useCallback((event: PaceGuardEvent) => {
+    if (event.event_type !== "checkin.created" || event.athlete_id !== "maya-chen") return;
+    const payload = event.payload as { pain?: number; note?: string };
+    setToastCopy({ title: "Athlete check-in received live", detail: `Maya reported ${payload.pain ?? "—"}/5${payload.note ? ` · ${payload.note}` : " · Coach queue updated"}` });
+    setToast(true);
+    window.setTimeout(() => setToast(false), 6200);
+  }, []);
+  usePaceGuardRealtime("bay-striders", onRealtimeEvent);
+
   const navigate = (next: Screen) => { setScreen(next); window.scrollTo({ top: 0, behavior: "smooth" }); };
-  const approve = () => { setApproved(true); setDrawerOpen(false); setToast(true); window.setTimeout(() => setToast(false), 5200); };
+  const approve = () => {
+    setApproved(true);
+    setDrawerOpen(false);
+    setToastCopy({ title: "Plan approved", detail: "Persisted to InsForge · athlete channel notified" });
+    setToast(true);
+    const event: PaceGuardEvent = { team_id: "bay-striders", athlete_id: "maya-chen", event_type: "plan.approved", actor_role: "coach", payload: { plan: "35-minute easy aerobic run + calf mobility", status: "approved" }, consent_scope: "athlete:read", created_at: new Date().toISOString() };
+    void fetch("/api/events", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(event) }).then(response => response.json()).then(result => publishPaceGuardEvent("bay-striders", result.event ?? event)).catch(() => undefined);
+    window.setTimeout(() => setToast(false), 5200);
+  };
 
   const setDemoStep = (step: number) => {
     const destinations: Screen[] = ["dashboard", "integrations", "profile", "radar", "profile", "athlete"];
@@ -873,7 +893,7 @@ export default function Home() {
       </section>
       <RecommendationDrawer open={drawerOpen} onOpenChange={setDrawerOpen} onApprove={approve} approved={approved} />
       <ArchitectureModal open={architectureOpen} onOpenChange={setArchitectureOpen} />
-      <ApprovalToast visible={toast} onClose={() => setToast(false)} />
+      <ApprovalToast visible={toast} onClose={() => setToast(false)} title={toastCopy.title} detail={toastCopy.detail} />
       {guidedStep != null && <GuidedDemo step={guidedStep} onStep={setDemoStep} onClose={() => { setGuidedStep(null); setDrawerOpen(false); }} />}
       <nav className="mobile-app-nav" aria-label="Mobile navigation"><button className={screen === "dashboard" ? "active" : ""} onClick={() => navigate("dashboard")}><LayoutDashboard size={18} /><span>Command</span></button><button className={screen === "radar" ? "active" : ""} onClick={() => navigate("radar")}><Gauge size={18} /><span>Radar</span></button><button className={screen === "profile" ? "active" : ""} onClick={() => navigate("profile")}><BarChart3 size={18} /><span>Maya</span></button><button className={screen === "integrations" ? "active" : ""} onClick={() => navigate("integrations")}><Cable size={18} /><span>Connect</span></button><button className={screen === "athlete" ? "active" : ""} onClick={() => navigate("athlete")}><UserRound size={18} /><span>Athlete</span></button></nav>
     </main>

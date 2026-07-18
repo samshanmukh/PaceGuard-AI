@@ -26,6 +26,15 @@ Open the local URL printed by the development server. No API keys, database, sig
 
 Optional Qdrant or hosted Lyzr credentials can be added later in Vercel Project Settings. Without them, PaceGuard uses its deterministic local workflow and seeded semantic memory.
 
+### InsForge + Lyzr live setup
+
+1. Apply `insforge/migrations/001_paceguard_realtime.sql` to the InsForge Postgres database.
+2. Configure an InsForge database trigger that publishes inserts from `paceguard_events` to channel `paceguard:<team_id>` using event name `paceguard_event`.
+3. Add `INSFORGE_BASE_URL`, `INSFORGE_ANON_KEY`, `NEXT_PUBLIC_INSFORGE_BASE_URL`, and `NEXT_PUBLIC_INSFORGE_ANON_KEY` in Vercel. Protect reads/inserts with InsForge RLS before using real athlete identities.
+4. Add `LYZR_API_KEY`, `LYZR_AGENT_ID`, and `LYZR_USER_ID`. The API key remains server-only.
+
+When configured, coach approvals and athlete check-ins are persisted in InsForge and broadcast to the team channel. Safer-plan generation calls Lyzr Inference v3 and validates its JSON before merging it with PaceGuard's safety defaults. If either service is unavailable, the hackathon demo remains usable through explicit local fallbacks.
+
 Useful checks:
 
 ```bash

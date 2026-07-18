@@ -1,10 +1,19 @@
 import { NextResponse } from "next/server";
 import { getProviderAuthorizationUrl, integrationProviders, normalizedDemoEvents, type IntegrationProviderId } from "@/lib/integrations";
+import { isInsForgeConfigured } from "@/lib/insforge";
 
 export const runtime = "nodejs";
 
 export async function GET() {
-  return NextResponse.json({ providers: integrationProviders, events: normalizedDemoEvents, mode: "fictional-demo" });
+  return NextResponse.json({
+    providers: integrationProviders,
+    events: normalizedDemoEvents,
+    mode: "fictional-demo",
+    services: {
+      insforge: { configured: isInsForgeConfigured(), capabilities: ["Postgres event persistence", "Realtime team channels"] },
+      lyzr: { configured: Boolean(process.env.LYZR_API_KEY && (process.env.LYZR_AGENT_ID || process.env.LYZR_WORKFLOW_ID)), capabilities: ["Agent inference v3", "Validated safer-plan response"] },
+    },
+  });
 }
 
 export async function POST(request: Request) {

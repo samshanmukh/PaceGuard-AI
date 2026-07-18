@@ -75,6 +75,9 @@ async function callLyzr(): Promise<LyzrAttempt> {
         agent_id: agentId,
         session_id: `${agentId}-${randomUUID()}`,
         message: `Return ONLY valid JSON for a fictional coaching demo using these exact keys: title, original, replacement, duration, intensity, weeklyAdjustment, reassessment, confidence, rationale, guardrail. Athlete context: Maya Chen, elite 10K, race in 18 days; readiness 41; acute load +28%; recovery 44 and down 18 points; sleep 5h12m; athlete reports calf tightness after intervals; planned session 8 x 800m at 10K pace. Do not diagnose injury. Require coach approval and direct athlete or qualified-professional review.`,
+        system_prompt_variables: { product: "PaceGuard AI", decision_mode: "coach_approval_required", athlete_id: "maya-chen" },
+        filter_variables: { team_id: "bay-striders", sport: "running", event: "10K" },
+        features: [],
       }),
     });
     if (!response.ok) return { plan: null, note: `Lyzr request rejected with HTTP ${response.status}.` };

@@ -25,7 +25,7 @@ test("uses the standard Vercel-compatible Next.js toolchain", async () => {
 });
 
 test("keeps product, safety, and provider seams in source", async () => {
-  const [page, layout, seed, memory, workflow, integrations, integrationRoute] = await Promise.all([
+  const [page, layout, seed, memory, workflow, integrations, integrationRoute, insforge, eventRoute, migration] = await Promise.all([
     readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/layout.tsx", import.meta.url), "utf8"),
     readFile(new URL("../data/seed.ts", import.meta.url), "utf8"),
@@ -33,6 +33,9 @@ test("keeps product, safety, and provider seams in source", async () => {
     readFile(new URL("../lib/lyzr.ts", import.meta.url), "utf8"),
     readFile(new URL("../lib/integrations.ts", import.meta.url), "utf8"),
     readFile(new URL("../app/api/integrations/route.ts", import.meta.url), "utf8"),
+    readFile(new URL("../lib/insforge.ts", import.meta.url), "utf8"),
+    readFile(new URL("../app/api/events/route.ts", import.meta.url), "utf8"),
+    readFile(new URL("../insforge/migrations/001_paceguard_realtime.sql", import.meta.url), "utf8"),
   ]);
 
   assert.match(page, /Decision trace/);
@@ -59,5 +62,8 @@ test("keeps product, safety, and provider seams in source", async () => {
   assert.match(integrations, /Runna → Strava \/ Apple Health → PaceGuard/);
   assert.match(integrations, /consentScope/);
   assert.match(integrationRoute, /fictional-demo/);
+  assert.match(insforge, /@insforge\/sdk/);
+  assert.match(eventRoute, /createPaceGuardEvent/);
+  assert.match(migration, /paceguard_events/);
   assert.doesNotMatch(page, /SkeletonPreview|codex-preview/);
 });
