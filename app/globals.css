@@ -844,6 +844,60 @@ html, body { background: var(--ink); color: var(--text); }
 @media (max-width: 1100px) { .integration-health-strip { grid-template-columns: repeat(2,1fr); }.integration-layout { grid-template-columns: 1fr; }.zero-agent-panel { position: static; }.provider-grid { grid-template-columns: repeat(2,1fr); } }
 @media (max-width: 740px) { .integration-health-strip, .provider-grid { grid-template-columns: 1fr; }.integration-intro { align-items: flex-start; gap: 14px; }.integration-intro .primary-button { width: 100%; }.event-table { overflow-x: auto; }.event-row { min-width: 700px; }.mobile-app-nav { grid-template-columns: repeat(5,1fr); }.connection-agent { padding: 18px; } }
 
+/* 2026 sport-performance art direction — sharp, fast, unmistakably PaceGuard */
+:root { --lime: #b9f227; --sport-ink: #101a24; --sport-blue: #2e6cf6; --sport-line: #d7ded8; }
+body { background: #f2f5f0; }
+.landing-screen { background: radial-gradient(circle at 81% 20%, rgba(46,108,246,.13), transparent 25%), radial-gradient(circle at 44% 76%, rgba(185,242,39,.2), transparent 27%), #f7f9f5; }
+.landing-grid { opacity: .32; background-image: linear-gradient(rgba(31,48,62,.09) 1px,transparent 1px),linear-gradient(90deg,rgba(31,48,62,.09) 1px,transparent 1px); background-size: 56px 56px; mask-image: linear-gradient(to bottom,black 5%,transparent 82%); }
+.landing-nav { border-bottom-color: rgba(25,40,51,.16); }
+.landing-hero h1 { color: var(--sport-ink); font-weight: 760; letter-spacing: -.075em; }
+.landing-hero h1 em { color: var(--sport-ink); -webkit-text-stroke: 0; position: relative; }
+.landing-hero h1 em::after { content: ""; position: absolute; z-index: -1; left: -2%; right: -3%; bottom: 5%; height: 24%; background: var(--lime); transform: skewX(-12deg); }
+.landing-hero > p { color: #53625b; }
+.telemetry-stage { border: 1px solid #27394a; border-radius: 4px; background: linear-gradient(145deg,#132331,#09131d); box-shadow: 18px 24px 0 rgba(22,35,45,.08),0 34px 90px rgba(30,48,60,.2); transform: rotate(-1deg); }
+.telemetry-stage::after { content: "LIVE PERFORMANCE FEED"; position: absolute; z-index: 3; top: 16px; right: 18px; color: rgba(255,255,255,.28); font: 7px var(--font-geist-mono),monospace; letter-spacing: .16em; }
+.primary-button { border-radius: 4px; background: var(--lime); box-shadow: 4px 4px 0 #17220d; text-transform: uppercase; letter-spacing: .045em; }
+.primary-button:hover { background: #c8ff39; box-shadow: 2px 2px 0 #17220d; transform: translate(2px,2px); }
+.tour-button,.guided-demo-trigger,.secondary-button,.date-button,.filter-button { border-radius: 4px; }
+.landing-feature-grid article,.sponsor-tools-grid article,.landing-final-cta,.tech-stack-grid { border-radius: 5px; }
+.landing-feature-grid article { position: relative; overflow: hidden; }
+.landing-feature-grid article::after { content: ""; position: absolute; top: 0; right: 0; width: 48px; height: 5px; background: var(--lime); }
+.landing-feature-grid article:nth-child(2)::after { background: var(--sport-blue); }.landing-feature-grid article:nth-child(3)::after { background: #ff735e; }.landing-feature-grid article:nth-child(4)::after { background: #172632; }
+.landing-feature-grid article > span,.sponsor-tools-grid header > span { border-radius: 3px; }
+.app-shell { background: #f0f3ee; }
+.app-shell::before { background: linear-gradient(90deg,rgba(25,43,55,.035) 1px,transparent 1px),linear-gradient(rgba(25,43,55,.025) 1px,transparent 1px); background-size: 56px 56px; }
+.sidebar { background: linear-gradient(180deg,#142331,#0b1721); border-right: 0; box-shadow: 8px 0 30px rgba(20,36,49,.14); }
+.sidebar .brand-lockup,.sidebar .brand-lockup b { color: #f5f7f2; }.sidebar .brand-lockup i { color: var(--lime); }
+.sidebar .team-switcher { border-color: rgba(255,255,255,.12); background: rgba(255,255,255,.055); }.sidebar .team-switcher b { color: #f1f4ef; }.sidebar .team-switcher small { color: #81919c; }
+.sidebar .nav-label,.sidebar .rail-head { color: #657985; }.sidebar .main-nav button { color: #8ca0ac; border-radius: 3px; }.sidebar .main-nav button:hover { color: #fff; background: rgba(255,255,255,.06); }.sidebar .main-nav button.active { color: #111d25; background: var(--lime); box-shadow: 4px 4px 0 rgba(0,0,0,.28); }.sidebar .main-nav button.active svg { color: #111d25; }.sidebar .main-nav button.active i { color: #fff; background: #172632; }
+.sidebar .athlete-rail button:hover { background: rgba(255,255,255,.06); }.sidebar .athlete-rail button b { color: #c5d0d5; }.sidebar .sidebar-bottom { border-top-color: rgba(255,255,255,.1); }.sidebar .sidebar-bottom > button,.sidebar-invite { color: #82949e; }.sidebar .coach-chip { background: rgba(255,255,255,.055); }.sidebar .coach-chip b { color: #f1f4ef; }
+.app-header { background: rgba(247,249,245,.88); border-bottom: 1px solid #d6ddd6; box-shadow: none; }
+.screen-shell { max-width: 1540px; }
+.page-intro h2 { color: var(--sport-ink); font-weight: 760; letter-spacing: -.055em; }
+.page-intro .eyebrow,.section-heading .eyebrow { color: #587087; }
+.summary-grid article { border-radius: 4px; border-top: 4px solid #172632; background: rgba(255,255,255,.94); box-shadow: 7px 8px 0 rgba(30,48,60,.055); }
+.summary-grid article:nth-child(2) { border-top-color: #ff735e; }.summary-grid article:nth-child(3) { border-top-color: #f0ad2d; }.summary-grid article:nth-child(4) { border-top-color: var(--sport-blue); }
+.summary-grid article strong { font-size: 31px; font-weight: 780; letter-spacing: -.06em; }
+.decision-hero { border-radius: 5px; border: 1px solid #efb8b0; box-shadow: 10px 12px 0 rgba(255,115,94,.08); overflow: hidden; }
+.decision-profile { background: linear-gradient(135deg,#fff3f0,#fff); }.decision-action .primary-button { width: 100%; }
+.panel,.provider-card,.zero-agent-panel,.normalized-panel { border-radius: 5px; }
+.panel-heading h3,.section-heading h3 { color: var(--sport-ink); font-weight: 740; letter-spacing: -.045em; }
+.heat-cell,.radar-card { border-radius: 3px; }.heat-cell.elevated { box-shadow: inset 0 -3px #ef655a; }
+.race-panel { background: linear-gradient(135deg,#fff,#f3fae7); }
+.race-visual { border-radius: 50% 50% 44% 56%; }
+.guided-demo { border-radius: 5px; border-top: 5px solid var(--lime); box-shadow: 10px 12px 0 rgba(20,35,49,.14); }
+.provider-card { border-top: 4px solid #d7dfd5; }.provider-card.connected { border-top-color: var(--lime); }.provider-card:hover { transform: translateY(-3px) rotate(-.15deg); }
+.athlete-portal { background: radial-gradient(circle at 80% 0,rgba(46,108,246,.12),transparent 27%),linear-gradient(180deg,#f7f9f5,#eef2ec); }
+.athlete-portal-nav { border-bottom: 3px solid var(--sport-ink); }
+.athlete-portal-greeting h1 { color: var(--sport-ink); font-weight: 780; letter-spacing: -.065em; }
+.today-plan,.portal-side,.portal-checkin,.portal-week { border-radius: 5px; box-shadow: 8px 9px 0 rgba(25,43,55,.055); }
+.today-plan { position: relative; overflow: hidden; border-top: 5px solid var(--lime); }.today-plan::after { content: "APPROVED / 001"; position: absolute; top: 26px; right: -30px; padding: 5px 34px; color: #fff; background: var(--sport-ink); transform: rotate(35deg); font: 6px var(--font-geist-mono),monospace; letter-spacing: .1em; }
+.portal-stats > div,.portal-explainer,.race-window { border-radius: 3px; }
+.access-card { border-radius: 5px; border-top: 6px solid var(--lime); box-shadow: 14px 16px 0 rgba(25,43,55,.1); }
+.role-picker button,.invite-card input,.invite-result { border-radius: 3px; }
+@media (max-width: 740px) { .landing-access > a { display: none; }.telemetry-stage { transform: none; box-shadow: 8px 10px 0 rgba(22,35,45,.09); }.landing-feature-grid article { min-height: 220px; }.summary-grid article { box-shadow: 4px 5px 0 rgba(30,48,60,.05); }.today-plan::after { display: none; } }
+@media (min-width: 741px) and (max-width: 1400px) { .landing-hero { width: min(540px,45vw); }.landing-hero h1 { font-size: clamp(49px,4.65vw,66px); } }
+
 /* Landing product story */
 .landing-screen { overflow: clip; }
 .landing-showcase { position: relative; z-index: 2; margin-top: clamp(690px, 92vh, 900px); padding: 82px 0 34px; border-top: 1px solid #dce4da; }
