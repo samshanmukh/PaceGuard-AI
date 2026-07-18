@@ -238,6 +238,18 @@ function Landing({ onEnter, onGuide }: { onEnter: () => void; onGuide: () => voi
           <article><span><UserCheck size={20} /></span><small>04 · Act</small><h3>Close the athlete loop</h3><p>The athlete receives a calm explanation, the approved session, and a fast way to report how they feel.</p><b>Role-scoped · Human-controlled</b></article>
         </div>
 
+        <div className="realtime-proof">
+          <div className="realtime-proof-copy"><span className="eyebrow"><Radio size={13} /> Live coach–athlete loop</span><h2>A check-in should not wait for refresh.</h2><p>Plan approvals reach the athlete immediately. Pain score, context, and consent scope return to the coach as a persistent realtime event.</p></div>
+          <div className="realtime-flow" aria-label="Realtime check-in flow">
+            <div><span><BadgeCheck size={18} /></span><small>Coach · 08:42</small><b>Safer plan approved</b><i>Plan version 04</i></div>
+            <ArrowRight size={18} />
+            <div><span><Smartphone size={18} /></span><small>Athlete · live</small><b>Maya sees the update</b><i>No refresh required</i></div>
+            <ArrowRight size={18} />
+            <div className="checkin-event"><span><MessageCircle size={18} /></span><small>Check-in · just now</small><b>Calf feels 2 / 5</b><i>Coach notified · auditable</i></div>
+          </div>
+          <footer><span><i /> InsForge Realtime</span><b>JWT scoped · Postgres persisted · team channel</b></footer>
+        </div>
+
         <div className="landing-stack-block">
           <div className="landing-section-title"><span className="eyebrow">Production-minded stack</span><h2>Fast demo. Real extension points.</h2><p>The local experience runs without credentials, while every external system has a typed adapter and an honest activation boundary.</p></div>
           <div className="tech-stack-grid">
@@ -253,6 +265,7 @@ function Landing({ onEnter, onGuide }: { onEnter: () => void; onGuide: () => voi
         <div className="sponsor-tools-block">
           <div className="landing-section-title"><span className="eyebrow">Sponsor tools in the product</span><h2>Every tool has a visible job.</h2><p>No logo wall. Each sponsor technology maps to a product capability the coach can inspect during the demo.</p></div>
           <div className="sponsor-tools-grid">
+            <article className="insforge"><header><span><Radio size={21} /></span><div><small>Realtime backend</small><h3>InsForge</h3></div><i>Live decision loop</i></header><p>Persists approvals and athlete check-ins, then broadcasts role-scoped updates to both experiences without a refresh.</p><footer><b>See it in</b><span>Approve plan → Athlete check-in → Coach alert</span></footer></article>
             <article className="lyzr"><header><span><Bot size={21} /></span><div><small>Agent orchestration</small><h3>Lyzr</h3></div><i>Decision workflow</i></header><p>Coordinates Signal Analyst, Evidence, Plan, and Safety agents behind one stable response contract.</p><footer><b>See it in</b><span>Generate safer plan → Decision Trace</span></footer></article>
             <article className="qdrant"><header><span><Database size={21} /></span><div><small>Semantic memory</small><h3>Qdrant</h3></div><i>Athlete intelligence</i></header><p>Retrieves comparable athlete situations by signal pattern, race proximity, profile, and coaching context.</p><footer><b>See it in</b><span>Athlete Intelligence → Comparable situations</span></footer></article>
             <article className="zero"><header><span><Zap size={21} /></span><div><small>Agent capabilities</small><h3>Zero.xyz</h3></div><i>Approval gateway</i></header><p>Discovers optional specialist analysis with explicit payload review, one-run consent, and a hard spend limit.</p><footer><b>See it in</b><span>Data Connections → Zero agent gateway</span></footer></article>
