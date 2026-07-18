@@ -55,10 +55,12 @@ function parseLyzrPlan(payload: unknown): Partial<DecisionPlan> | null {
   }
 }
 
-async function callLyzr(): Promise<Partial<DecisionPlan> | null> {
+type LyzrAttempt = { plan: Partial<DecisionPlan> | null; note: string };
+
+async function callLyzr(): Promise<LyzrAttempt> {
   const apiKey = process.env.LYZR_API_KEY;
   const agentId = process.env.LYZR_AGENT_ID ?? process.env.LYZR_WORKFLOW_ID;
-  if (!apiKey || !agentId) return null;
+  if (!apiKey || !agentId) return { plan: null, note: `Lyzr configuration missing: ${!apiKey ? "API key" : "agent ID"}.` };
   const endpoint = process.env.LYZR_API_URL ?? "https://agent-prod.studio.lyzr.ai/v3/inference/chat/";
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 12_000);
@@ -75,8 +77,11 @@ async function callLyzr(): Promise<Partial<DecisionPlan> | null> {
         message: `Return ONLY valid JSON for a fictional coaching demo using these exact keys: title, original, replacement, duration, intensity, weeklyAdjustment, reassessment, confidence, rationale, guardrail. Athlete context: Maya Chen, elite 10K, race in 18 days; readiness 41; acute load +28%; recovery 44 and down 18 points; sleep 5h12m; athlete reports calf tightness after intervals; planned session 8 x 800m at 10K pace. Do not diagnose injury. Require coach approval and direct athlete or qualified-professional review.`,
       }),
     });
-    if (!response.ok) throw new Error(`Lyzr returned ${response.status}`);
-    return parseLyzrPlan(await response.json());
+    if (!response.ok) return { plan: null, note: `Lyzr request rejected with HTTP ${response.status}.` };
+    const plan = parseLyzrPlan(await response.json());
+    return { plan, note: plan ? "Live Lyzr response validated." : "Lyzr responded, but its message did not contain valid plan JSON." };
+  } catch (error) {
+    return { plan: null, note: error instanceof Error && error.name === "AbortError" ? "Lyzr request timed out after 12 seconds." : "Lyzr request failed before a valid response was received." };
   } finally {
     clearTimeout(timeout);
   }
@@ -86,19 +91,20 @@ export async function runPaceGuardWorkflow(): Promise<PaceGuardWorkflowResult> {
   const memory = getMemoryProvider();
   const cases = await memory.search("elite 10K acute load +28% recovery down sleep below 6 hours calf tightness race in 18 days");
   try {
-    const livePlan = await callLyzr();
-    if (livePlan) {
+    const attempt = await callLyzr();
+    if (attempt.plan) {
       return {
         workflow: "lyzr-live-v1",
         memoryProvider: memory.name,
         evidenceCount: cases.length,
         agents: fallbackAgents(cases.length),
-        plan: { ...fallbackPlan, ...livePlan, confidence: typeof livePlan.confidence === "number" ? livePlan.confidence : fallbackPlan.confidence },
+        plan: { ...fallbackPlan, ...attempt.plan, confidence: typeof attempt.plan.confidence === "number" ? attempt.plan.confidence : fallbackPlan.confidence },
         providerNote: "Live response from the configured Lyzr agent; PaceGuard safety defaults fill any omitted fields.",
       };
     }
+    return { workflow: "lyzr-adapter/local-v1", memoryProvider: memory.name, evidenceCount: cases.length, agents: fallbackAgents(cases.length), plan: fallbackPlan, providerNote: attempt.note };
   } catch (error) {
     console.error("Lyzr inference failed; using safe local fallback.", error instanceof Error ? error.message : "Unknown error");
   }
-  return { workflow: "lyzr-adapter/local-v1", memoryProvider: memory.name, evidenceCount: cases.length, agents: fallbackAgents(cases.length), plan: fallbackPlan, providerNote: "Safe local fallback active." };
+  return { workflow: "lyzr-adapter/local-v1", memoryProvider: memory.name, evidenceCount: cases.length, agents: fallbackAgents(cases.length), plan: fallbackPlan, providerNote: "Safe local fallback active after an internal adapter error." };
 }
