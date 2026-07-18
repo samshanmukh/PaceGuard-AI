@@ -1051,3 +1051,136 @@ body { background: #f2f5f0; }
   .signal-card { min-height: 145px; }
   .timeline-chart { height: 250px; }
 }
+
+/* Product-wide visibility audit: no essential UI copy should render as micro text. */
+.eyebrow, .priority-label, .evidence-heading, .portal-card-head,
+.provider-category, .guided-kicker, .modal-kicker { font-size: 11px; }
+.page-intro p, .section-heading p, .panel-heading p { font-size: 13px; line-height: 1.55; }
+.date-button, .filter-button, .primary-button, .secondary-button, .text-button { font-size: 12px; }
+
+/* Coach command center */
+.summary-grid article > span { font-size: 11px; }
+.summary-grid article p { font-size: 12px; }
+.summary-grid article > i { font-size: 10px; }
+.athlete-identity p, .readiness-block > small, .hero-signals small,
+.decision-action span, .decision-caution { font-size: 11px; }
+.ring-inner small, .evidence-heading small { font-size: 10px; }
+.decision-action small { font-size: 10px; }
+.decision-action b { font-size: 15px; }
+.readiness-legend span { font-size: 10px; }
+.heat-cell span, .heat-cell small { font-size: 10px; }
+.heat-cell b { font-size: 18px; }
+.panel-link { font-size: 11px; }
+.race-visual span, .race-visual small, .race-progress { font-size: 10px; }
+.race-copy p { font-size: 11px; }
+.live-chip { font-size: 10px; }
+.activity-list > div > span { font-size: 10px; }
+.activity-list p b { font-size: 11px; }
+.activity-list p small, .sponsor-note { font-size: 10px; }
+
+/* Risk radar */
+.radar-updated, .segmented button, .select-wrap select { font-size: 11px; }
+.segmented button { min-height: 36px; }
+.select-wrap { height: 38px; }
+.radar-rings > span { font-size: 10px; }
+.state-pill { font-size: 9px; padding: 5px 7px; }
+.radar-card-title b { font-size: 13px; }
+.radar-card-title small { font-size: 10px; }
+.radar-details, .radar-reveal > span { font-size: 9px; }
+.radar-reveal p, .radar-reveal b { font-size: 10px; }
+.radar-footer-stats span, .radar-footer-stats b { font-size: 11px; }
+.empty-state p, .empty-state button { font-size: 11px; }
+
+/* Athlete portal and check-in */
+.athlete-portal-nav > div > span, .athlete-portal-nav button { font-size: 11px; }
+.race-window small, .portal-stats small, .portal-side small,
+.portal-side i, .portal-side a { font-size: 10px; }
+.today-plan > p, .portal-explainer { font-size: 12px; }
+.portal-stats b, .portal-side b { font-size: 12px; }
+.portal-pain small { font-size: 9px; }
+.portal-checkin textarea { min-height: 80px; font-size: 12px; }
+.portal-saved span, .portal-saved button { font-size: 11px; }
+.portal-week article { font-size: 12px; }
+.portal-week article > span, .portal-week article small { font-size: 10px; }
+.athlete-portal-mobile-nav button, .mobile-app-nav button { font-size: 10px; }
+
+/* Integrations and connector agent */
+.integration-health-strip span { font-size: 11px; }
+.integration-health-strip small { font-size: 10px; }
+.provider-status { font-size: 9px; }
+.provider-card > p, .zero-agent-panel > p { font-size: 11px; }
+.provider-scopes span, .provider-source small { font-size: 9px; }
+.provider-source b, .provider-card footer button { font-size: 10px; }
+.provider-card footer button { min-height: 38px; }
+.zero-agent-head small, .zero-badge { font-size: 9px; }
+.zero-capability span, .zero-policy small, .zero-footnote { font-size: 9px; }
+.zero-capability b, .zero-policy b, .zero-agent-panel label { font-size: 10px; }
+.zero-agent-panel select, .zero-approve, .zero-approved { font-size: 11px; }
+.normalized-panel .panel-heading p { font-size: 12px; }
+.event-row { min-height: 58px; font-size: 11px; }
+.event-head, .event-row code { font-size: 9px; }
+.event-row > span:first-child small { font-size: 9px; }
+.connection-agent > p, .agent-conversation p { font-size: 11px; }
+.agent-conversation small, .permission-list small, .permission-list em,
+.connection-trust { font-size: 9px; }
+.permission-list b { font-size: 11px; }
+
+/* Modals, plan workflow, and approval drawer */
+.architecture-modal > p, .drawer-header p { font-size: 12px; }
+.architecture-stage b, .architecture-detail b { font-size: 11px; }
+.architecture-stage small, .architecture-detail span, .architecture-modal footer { font-size: 9px; }
+.drawer-athlete b { font-size: 12px; }
+.drawer-athlete span, .workflow-state { font-size: 10px; }
+.agent-index { font-size: 9px; }
+.agent-step b { font-size: 11px; }
+.agent-step small, .agent-step p, .analyzing { font-size: 9px; }
+.workflow-source > span, .workflow-source b { font-size: 9px; }
+.workflow-source strong { font-size: 11px; }
+.plan-loading > span, .plan-error span, .plan-error button { font-size: 10px; }
+.safety-pass, .old-plan > span, .new-plan > span { font-size: 9px; }
+.old-plan b, .new-plan b { font-size: 12px; }
+.old-plan small, .new-plan small { font-size: 10px; }
+.plan-actions-list b { font-size: 11px; }
+.plan-actions-list small { font-size: 9px; }
+.plan-rationale > span, .safety-panel > div > span { font-size: 11px; }
+.plan-rationale p, .safety-panel p { font-size: 10px; }
+.plan-rationale > div span, .safety-panel i { font-size: 9px; }
+.manual-editor label, .manual-editor > div span { font-size: 10px; }
+.manual-editor select, .manual-editor input, .manual-editor textarea { font-size: 12px; }
+.human-loop span, .human-loop b, .checkin-sent { font-size: 10px; }
+.approval-toast b { font-size: 12px; }
+.approval-toast p { font-size: 10px; }
+
+/* Landing product story */
+.landing-feature-grid article small, .landing-feature-grid article b,
+.tech-stack-grid span, .tech-stack-grid small,
+.sponsor-tools-grid header small, .sponsor-tools-grid header i,
+.sponsor-tools-grid footer { font-size: 10px; }
+.landing-feature-grid article p, .realtime-proof-copy p { font-size: 12px; }
+.realtime-flow small, .realtime-flow i, .realtime-proof > footer { font-size: 10px; }
+.realtime-flow b { font-size: 13px; }
+
+@media (max-width: 740px) {
+  .page-intro p, .section-heading p, .panel-heading p { font-size: 12px; }
+  .today-plan { padding: 22px; }
+  .today-plan h2 { font-size: 27px; }
+  .portal-checkin, .portal-week { padding: 22px; }
+  .architecture-flow { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* Final legibility floor for supporting copy verified in the rendered UI. */
+.team-switcher small, .coach-chip small { font-size: 11px; }
+.summary-grid article > i, .ring-inner small, .evidence-heading small,
+.decision-action small { font-size: 11px; }
+.heat-cell span, .heat-cell small, .race-visual span, .race-visual small,
+.race-progress, .activity-list > div > span, .activity-list p small,
+.activity-list p b { font-size: 11px; }
+.landing-access > a, .landing-feature-grid article small,
+.landing-feature-grid article b, .realtime-flow small, .realtime-flow i,
+.realtime-proof > footer, .tech-stack-grid span, .tech-stack-grid small,
+.sponsor-tools-grid header small, .sponsor-tools-grid header i,
+.sponsor-tools-grid footer, .landing-screen > .landing-footer { font-size: 11px; }
+.radar-reveal > span { font-size: 10px; }
+.provider-scopes span, .provider-source small, .zero-agent-head small,
+.zero-badge, .zero-capability span, .zero-policy small, .zero-footnote,
+.event-head, .event-row code, .event-row > span:first-child small { font-size: 10px; }
